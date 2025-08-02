@@ -136,7 +136,6 @@ int main(void)
     float spawnTimer = 0.0f;
     float nextSpawnTime = randomSpawnTime(); // Set initial random spawn time
 
-    PlaySound(*lizardPtr);
     while (!WindowShouldClose())
     {
       float dT = GetFrameTime(); //deltaTime
