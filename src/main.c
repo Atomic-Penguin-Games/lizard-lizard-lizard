@@ -9,6 +9,11 @@ typedef struct Player
   Vector2 position;
 } Player;
 
+typedef struct Iguana
+{
+  Vector2 position;
+
+} Iguana;
 
 int main(void)
 {
@@ -22,6 +27,7 @@ int main(void)
     InitAudioDevice();
 
     Texture sprite = LoadTexture("res/lizardSprite.png");
+    Texture iguanaSprite = LoadTexture("res/iguanaSprite.png");
 
     Sound lizardSound = LoadSound("res/lizard.wav");
     Sound* lizardPtr = &lizardSound;
@@ -40,27 +46,40 @@ int main(void)
       .position = { 50, 50}
     };
 
+    Iguana iguana = {
+      .position = { 400, 400}
+    };
+
     PlaySound(*lizardPtr);
     while (!WindowShouldClose())
     {
+      float deltaTime = GetFrameTime();
+      float speed = 300.0f; // pixels per second
 
-      if (IsKeyPressed(KEY_W))
+      if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP))
       {
-        PlaySound(*sounds[0]);
+        player.position.y -= speed * deltaTime;
       }
-      if (IsKeyPressed(KEY_S))
+      if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN))
       {
-        PlaySound(*sounds[1]);
+        player.position.y += speed * deltaTime;
       }
-      if (IsKeyPressed(KEY_D))
+      if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT))
       {
-        PlaySound(*sounds[2]);
+        player.position.x -= speed * deltaTime;
+      }
+      if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT))
+      {
+        player.position.x += speed * deltaTime;
       }
 
       BeginDrawing();
       ClearBackground(RED);
       DrawText("Hola Mundo\nLizard Meme", screenWidth/2, screenHeight/2, 40, DARKGRAY);
-      DrawTextureEx(sprite, player.position, 0.0f, 0.25f, RAYWHITE);
+      DrawRectangle(player.position.x+50, player.position.y+10, 160, 200, BLUE);
+      DrawRectangle(iguana.position.x, iguana.position.y, 200, 90, GREEN);
+      DrawTextureEx(sprite, player.position, 0.0f, 0.28f, RAYWHITE);
+      DrawTextureEx(iguanaSprite, (Vector2) {400, 400}, 0.0f, 0.87f, RAYWHITE);
       
       EndDrawing();
     }
