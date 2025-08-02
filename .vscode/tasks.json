@@ -1,0 +1,29 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "build",
+        "type": "shell",
+        "command": "cmake",
+        "args": [
+          "--build",
+          "build",         // path to your build directory
+          "--config",
+          "Debug"          // or "Release" depending on your CMake setup
+        ],
+        "problemMatcher": [],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "options": {
+          "cwd": "${workspaceFolder}",
+          "terminal": {
+            "reveal": "never",   // or "never" if you prefer
+            "close": true
+          }
+        },
+        "detail": "Build the project using CMake"
+      }
+    ]
+  }

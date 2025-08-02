@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Game",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/{#executableName}",
+      "args": [],
+      "cwd": "${workspaceFolder}/build/",
+    },
+    {
+      "name": "Build & Debug Game",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/{#executableName}",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "build", // <-- This triggers the "build" task before debugging
+    }
+  ]
+}
