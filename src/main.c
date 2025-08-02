@@ -2,15 +2,16 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define SPEED 270.0f
-#define IGUANA_SPEED 500.0f
-#define OBJECT_SPAWN_RATE_MIN 0.8f // Minimum spawn time in seconds
-#define OBJECT_SPAWN_RATE_MAX 2.0f // Maximum spawn time in seconds
-#define DEBUG_MODE true
+#define SPEED 250.0f
+#define IGUANA_SPEED 530.0f
+#define OBJECT_SPAWN_RATE_MIN 0.5f // Minimum spawn time in seconds
+#define OBJECT_SPAWN_RATE_MAX 1.5f // Maximum spawn time in seconds
+#define DEBUG_MODE false
 #define MAX_IGUANAS 100
 
 int randomNum(int max);
 float randomSpawnTime();
+int score = 0;
 
 
 typedef struct Player
@@ -186,7 +187,7 @@ int main(void)
         }
         else
         {
-          Vector2 sawHitboxOffset = {30, 30}; // Center the circular hitbox
+          Vector2 sawHitboxOffset = {60, 60}; // Center the circular hitbox
           spawnSawblade(&sawbladeManager, sawSprite, sawHitboxOffset, screenWidth, screenHeight);
         }
         spawnTimer = 0.0f;
@@ -202,6 +203,7 @@ int main(void)
         {
           PlaySound(*sounds[randomNum(2)]);
           removeIguana(&iguanaManager, i);
+          score++;
           break; // Exit loop to avoid index issues
         }
       }
@@ -210,8 +212,8 @@ int main(void)
       {
         if (CheckCollisionCircleRec(sawbladeManager.sawblades[i].hitbox.center, sawbladeManager.sawblades[i].hitbox.radius, player.hitbox))
         {
-          PlaySound(*sounds[randomNum(2)]);
           removeSawblade(&sawbladeManager, i);
+          //TODO Kill the player
           break; // Exit loop to avoid index issues
         }
       }
@@ -222,7 +224,8 @@ int main(void)
       drawIguanaManager(iguanaManager);
       drawSawbladeManager(sawbladeManager);
       drawPlayer(player);
-      
+      DrawText(TextFormat("%d", score), screenWidth/2, 30, 40, RAYWHITE);
+
       EndDrawing();
     }
 
@@ -313,7 +316,7 @@ void drawSaw(Sawblade sawblade)
   DrawTextureEx(sawblade.sprite, sawblade.position, 0.0f, 0.1f, RAYWHITE);
   if (DEBUG_MODE)
   {
-    DrawCircleV(sawblade.hitbox.center, sawblade.hitbox.radius, PINK);
+    DrawCircleLinesV(sawblade.hitbox.center, sawblade.hitbox.radius, PINK);
   }
 }
 
@@ -327,7 +330,7 @@ void drawIguanaManager(IguanaManager manager)
 
 void drawIguana(Iguana iguana)
 {
-  DrawTextureEx(iguana.data.sprite, iguana.position, 0.0f, 0.87f, RAYWHITE);
+  DrawTextureEx(iguana.data.sprite, iguana.position, 0.0f, 1.5f, RAYWHITE);
   if (DEBUG_MODE)
   {
     DrawRectangleLinesEx(iguana.data.hitbox, 2, BLUE);  
@@ -360,7 +363,7 @@ void spawnSawblade(SawbladeManager *manager, Texture sawSprite, Vector2 hitboxOf
   {
     Sawblade newSawblade = {
       .position = { screenWidth, randomNum(screenHeight - 100) },
-      .hitbox = { .center = { 0, 0 }, .radius = 40 },
+      .hitbox = { .center = { 0, 0 }, .radius = 50 },
       .sprite = sawSprite,
       .hitboxOffset = hitboxOffset
     };
