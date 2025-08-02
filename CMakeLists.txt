@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 4.0)
+cmake_minimum_required(VERSION 3.0)
 
 set(CMAKE_CXX_STANDARD_REQUIRED 23)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-project({#projectName})
-set(EXECUTABLE {#executableName})
+project(Lizard_Meme)
+set(EXECUTABLE lizard_meme)
 
 set(RAYLIB_DIR ${PROJECT_SOURCE_DIR}/../raylib-5.5)
 set(RAYLIB_INCLUDE_DIR ${RAYLIB_DIR}/include)

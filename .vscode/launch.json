@@ -5,7 +5,7 @@
       "name": "Debug Game",
       "type": "lldb",
       "request": "launch",
-      "program": "${workspaceFolder}/build/{#executableName}",
+      "program": "${workspaceFolder}/build/lizard_meme",
       "args": [],
       "cwd": "${workspaceFolder}/build/",
     },
@@ -13,7 +13,7 @@
       "name": "Build & Debug Game",
       "type": "lldb",
       "request": "launch",
-      "program": "${workspaceFolder}/build/{#executableName}",
+      "program": "${workspaceFolder}/build/lizard_meme",
       "args": [],
       "cwd": "${workspaceFolder}",
       "preLaunchTask": "build", // <-- This triggers the "build" task before debugging
