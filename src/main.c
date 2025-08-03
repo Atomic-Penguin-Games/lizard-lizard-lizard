@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define SPEED 250.0f
-#define IGUANA_SPEED 530.0f
+#define SPEED 420.0f
+#define IGUANA_SPEED 570.0f
 #define OBJECT_SPAWN_RATE_MIN 0.5f // Minimum spawn time in seconds
 #define OBJECT_SPAWN_RATE_MAX 1.5f // Maximum spawn time in seconds
-#define DEBUG_MODE false
+#define DEBUG_MODE true
 #define MAX_IGUANAS 100
 
 int randomNum(int max);
@@ -80,8 +80,8 @@ void removeSawblade(SawbladeManager *manager, int index);
 int main(void)
 {
     srand(time(NULL));
-    const int screenWidth = 1280;
-    const int screenHeight = 720;
+    const int screenWidth = 1920;
+    const int screenHeight = 1080;
 
     InitWindow(screenWidth, screenHeight, "Lizard Meme");
     SetTargetFPS(60);
