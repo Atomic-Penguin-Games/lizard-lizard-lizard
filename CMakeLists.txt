@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 4.0)
 
 set(CMAKE_CXX_STANDARD_REQUIRED 23)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

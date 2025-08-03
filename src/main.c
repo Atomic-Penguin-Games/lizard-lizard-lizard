@@ -4,10 +4,11 @@
 
 #define SPEED 420.0f
 #define IGUANA_SPEED 570.0f
-#define OBJECT_SPAWN_RATE_MIN 0.5f // Minimum spawn time in seconds
-#define OBJECT_SPAWN_RATE_MAX 1.5f // Maximum spawn time in seconds
+#define OBJECT_SPAWN_RATE_MIN 0.65f // Minimum spawn time in seconds
+#define OBJECT_SPAWN_RATE_MAX 1.7f // Maximum spawn time in seconds
 #define DEBUG_MODE true
 #define MAX_IGUANAS 100
+#define SAW_ROTATION_SPEED 50.0f
 
 int randomNum(int max);
 float randomSpawnTime();
@@ -54,6 +55,7 @@ typedef struct Sawblade
   Circle hitbox;
   Texture sprite;
   Vector2 hitboxOffset;
+  float rotation;
 } Sawblade;
 
 typedef struct SawbladeManager
@@ -223,7 +225,7 @@ int main(void)
       drawIguanaManager(iguanaManager);
       drawSawbladeManager(sawbladeManager);
       drawPlayer(player);
-      DrawText(TextFormat("%d", score), screenWidth/2, 30, 40, RAYWHITE);
+      DrawText(TextFormat("%d", score), screenWidth/2, 30, 60, RAYWHITE);
 
       EndDrawing();
     }
@@ -312,7 +314,22 @@ void updateIguanaManager(IguanaManager *manager, float deltaTime, IguanaData igu
 
 void drawSaw(Sawblade sawblade)
 {
-  DrawTextureEx(sawblade.sprite, sawblade.position, 0.0f, 0.1f, RAYWHITE);
+  // Calculate the center of the texture for rotation
+  Vector2 origin = { sawblade.sprite.width * 0.1f / 2.0f, sawblade.sprite.height * 0.1f / 2.0f };
+  
+  // Source rectangle (entire texture)
+  Rectangle source = { 0, 0, sawblade.sprite.width, sawblade.sprite.height };
+  
+  // Destination rectangle (position and scaled size)
+  Rectangle dest = { 
+    sawblade.position.x + origin.x, 
+    sawblade.position.y + origin.y, 
+    sawblade.sprite.width * 0.1f, 
+    sawblade.sprite.height * 0.1f 
+  };
+  
+  DrawTexturePro(sawblade.sprite, source, dest, origin, sawblade.rotation, RAYWHITE);
+  
   if (DEBUG_MODE)
   {
     DrawCircleLinesV(sawblade.hitbox.center, sawblade.hitbox.radius, PINK);
@@ -354,6 +371,7 @@ void updateSawblade(Sawblade *sawblade, float deltaTime, int screenWidth)
   sawblade->position.x -= IGUANA_SPEED * deltaTime;
   sawblade->hitbox.center.x = sawblade->position.x + sawblade->hitboxOffset.x;
   sawblade->hitbox.center.y = sawblade->position.y + sawblade->hitboxOffset.y;
+  sawblade->rotation += SAW_ROTATION_SPEED * deltaTime;
 }
 
 void spawnSawblade(SawbladeManager *manager, Texture sawSprite, Vector2 hitboxOffset, int screenWidth, int screenHeight)
@@ -364,7 +382,8 @@ void spawnSawblade(SawbladeManager *manager, Texture sawSprite, Vector2 hitboxOf
       .position = { screenWidth, randomNum(screenHeight - 100) },
       .hitbox = { .center = { 0, 0 }, .radius = 50 },
       .sprite = sawSprite,
-      .hitboxOffset = hitboxOffset
+      .hitboxOffset = hitboxOffset,
+      .rotation = 0.0f
     };
     newSawblade.hitbox.center.x = newSawblade.position.x + newSawblade.hitboxOffset.x;
     newSawblade.hitbox.center.y = newSawblade.position.y + newSawblade.hitboxOffset.y;
