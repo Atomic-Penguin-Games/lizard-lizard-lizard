@@ -14,7 +14,7 @@ set(RES_DIR "${CMAKE_SOURCE_DIR}/res")
 set(RES_LINK "${CMAKE_BINARY_DIR}/res")
 
 include_directories(
-  ${PROJECT_SOURCE_DIR}/include
+  ${PROJECT_SOURCE_DIR}/include/
   ${RAYLIB_INCLUDE_DIR}
 )
 

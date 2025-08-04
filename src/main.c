@@ -1,19 +1,11 @@
 #include "raylib.h"
-#include <stdlib.h>
-#include <time.h>
 
-#define SPEED 420.0f
-#define IGUANA_SPEED 570.0f
-#define OBJECT_SPAWN_RATE_MIN 0.65f // Minimum spawn time in seconds
-#define OBJECT_SPAWN_RATE_MAX 1.7f // Maximum spawn time in seconds
-#define DEBUG_MODE true
-#define MAX_IGUANAS 100
-#define SAW_ROTATION_SPEED 50.0f
+#include "definitions.h"
+#include "randomizer.h"
+#include "sound.h"
 
-int randomNum(int max);
-float randomSpawnTime();
+
 int score = 0;
-
 
 typedef struct Player
 {
@@ -81,31 +73,19 @@ void removeSawblade(SawbladeManager *manager, int index);
 
 int main(void)
 {
-    srand(time(NULL));
+    
     const int screenWidth = 1920;
     const int screenHeight = 1080;
 
     InitWindow(screenWidth, screenHeight, "Lizard Meme");
     SetTargetFPS(60);
 
-    InitAudioDevice();
+    initSoundSystem();
+    initRandomizer();
 
     Texture sprite = LoadTexture("res/lizardSprite.png");
     Texture iguanaSprite = LoadTexture("res/lizardEmoji.png");
     Texture sawSprite = LoadTexture("res/circular_saw_blade.png");
-
-    Sound lizardSound = LoadSound("res/lizard.wav");
-    Sound* lizardPtr = &lizardSound;
-
-    Sound sound2 = LoadSound("res/lizardUpShift.wav");
-    Sound sound3 = LoadSound("res/lizardDownShift.wav");
-    Sound* ptr2 = &sound2;
-    Sound* ptr3 = &sound3;
-
-    Sound* sounds[3];
-    sounds[0] = lizardPtr;
-    sounds[1] = ptr2;
-    sounds[2] = ptr3;
 
     Player player = {
       .position = { 50, 50},
@@ -202,7 +182,7 @@ int main(void)
       {
         if (CheckCollisionRecs(player.hitbox, iguanaManager.iguanas[i].data.hitbox))
         {
-          PlaySound(*sounds[randomNum(2)]);
+          playScoreSound();
           removeIguana(&iguanaManager, i);
           score++;
           break; // Exit loop to avoid index issues
@@ -234,29 +214,9 @@ int main(void)
     CloseWindow();
 }
 
-int randomNum(int max)
-{
-  int rng = rand();
-  return ((rng % max)+1);
-}
 
-float randomSpawnTime()
-{
-  // Generate random time between min and max in 0.1 second intervals
-  float minTime = OBJECT_SPAWN_RATE_MIN;
-  float maxTime = OBJECT_SPAWN_RATE_MAX;
-  
-  // Convert to 0.1 second intervals
-  int minIntervals = (int)(minTime * 10);
-  int maxIntervals = (int)(maxTime * 10);
-  
-  // Generate random interval count
-  int intervalRange = maxIntervals - minIntervals + 1;
-  int randomInterval = minIntervals + (rand() % intervalRange);
-  
-  // Convert back to seconds
-  return (float)randomInterval / 10.0f;
-}
+
+
 
 void drawPlayer(Player player)
 {
