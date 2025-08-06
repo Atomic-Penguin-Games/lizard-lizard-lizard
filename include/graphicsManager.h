@@ -4,11 +4,8 @@
 typedef struct GraphicsManager
 {
     Texture playerSpritesheet;
-    Texture lizardSpritesheet;
-    Texture sawSpritesheet;
+    Texture lizardSprite;
+    Texture sawSprite;
 } GraphicsManager;
 
-initGraphicsManager();
-Texture* getPlayerSprite();
-Texture* getLizardSprite();
-Texture* getSawSprite();
+GraphicsManager initGraphicsManager();

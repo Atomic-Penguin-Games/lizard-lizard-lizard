@@ -1,5 +1,6 @@
 #include "entityManager.h"
 #include "randomizer.h"
+#include <stdio.h>
 
 EntityManager initManager()
 {
@@ -12,7 +13,7 @@ EntityManager initManager()
     return manager;
 }
 
-void updateManager(EntityManager *manager, float deltaTime, 
+void updateManager(EntityManager *manager, GraphicsManager *gm, float deltaTime,
     int screenWidth, int screenHeight)
 {
     manager->spawnTimer += deltaTime;
@@ -21,18 +22,18 @@ void updateManager(EntityManager *manager, float deltaTime,
         // Randomly choose between spawning an iguana or sawblade (50/50 chance)
         if (randomNum(2) == 1)
         {
-          spawnEntity(&manager, LIZARD, iguanaSprite, screenWidth, screenHeight);
+          spawnEntity(manager, LIZARD, &gm->lizardSprite, screenWidth, screenHeight);
         }
         else
         {
-          spawnEntity(&manager, SAW, sawSprite, screenWidth, screenHeight);
+          spawnEntity(manager, SAW, &gm->sawSprite, screenWidth, screenHeight);
         }
         manager->spawnTimer = 0.0f;
         manager->nextSpawnTime = randomSpawnTime(); // Set new random spawn time
       }
 }
 
-void spawnEntity(EntityManager *manager, EntityType type, Texture sprite,
+void spawnEntity(EntityManager *manager, EntityType type, Texture *sprite,
     int screenWidth, int screenHeight)
 {
     if (manager->count < MAX_ENTITIES)
@@ -95,26 +96,76 @@ void updateEntities(EntityManager *manager, float deltaTime, int screenwidth)
     }
 }
 
+CollisionType checkForCollisions(EntityManager *manager, Rectangle* playerHitboxes[])
+{
+    printf("Checking collisions with %d entities\n", manager->count);
+    
+    for (int i = 0; i < manager->count; i++)
+    {
+        if (manager->entities[i].entityType == SAW)
+        {
+            printf("SAW entity %d at (%.2f, %.2f), circle center (%.2f, %.2f), radius %.2f\n", 
+                   i, manager->entities[i].position.x, manager->entities[i].position.y,
+                   manager->entities[i].hitbox.circle.center.x, manager->entities[i].hitbox.circle.center.y,
+                   manager->entities[i].hitbox.circle.radius);
+                   
+            for (int j = 0; j < PLAYER_HITBOX_COUNT; j++)
+            {
+                printf("  Checking against player hitbox %d: (%.2f, %.2f, %.2f, %.2f)\n",
+                       j, playerHitboxes[j]->x, playerHitboxes[j]->y, 
+                       playerHitboxes[j]->width, playerHitboxes[j]->height);
+                       
+                if (CheckCollisionCircleRec(manager->entities[i].hitbox.circle.center,
+                    manager->entities[i].hitbox.circle.radius, *playerHitboxes[j]))
+                {
+                    printf("  DEATH COLLISION detected with hitbox %d!\n", j);
+                    removeEntity(manager, i);
+                    return DEATH_COLLISION;
+                }
+            }
+        } else if (manager->entities[i].entityType == LIZARD)
+        {
+            printf("LIZARD entity %d at (%.2f, %.2f), rect (%.2f, %.2f, %.2f, %.2f)\n", 
+                   i, manager->entities[i].position.x, manager->entities[i].position.y,
+                   manager->entities[i].hitbox.rect.x, manager->entities[i].hitbox.rect.y,
+                   manager->entities[i].hitbox.rect.width, manager->entities[i].hitbox.rect.height);
+                   
+            for (int j = 0; j < PLAYER_HITBOX_COUNT; j++)
+            {
+                if (CheckCollisionRecs(manager->entities[i].hitbox.rect,
+                *playerHitboxes[j]))
+                {
+                    printf("  SCORE COLLISION detected with hitbox %d!\n", j);
+                    removeEntity(manager, i);
+                    return SCORE_COLLISION;
+                }
+            }
+        }
+    }
+    return NO_COLLISION;
+}
+
 void drawEntities(EntityManager *manager)
 {
     for (int i = 0; i < manager->count; i++)
     {
         Entity entity = manager->entities[i];
-        DrawTextureEx(entity.sprite, entity.position, entity.rotation,
+        DrawTextureEx(*entity.sprite, entity.position, entity.rotation,
             entity.scale, RAYWHITE);
-        // if (manager->entities->entityType == LIZARD)
-        // {
-        //     drawLizard(manager->entities[i]);
-        // } else if (manager->entities->entityType == SAW)
-        // {
-        //     drawSawblade(manager->entities[i]);
-        // }
+        
+        if (manager->entities->entityType == LIZARD)
+        {
+            drawLizard(manager->entities[i]);
+        } else if (manager->entities->entityType == SAW)
+        {
+            drawSawblade(manager->entities[i]);
+        }
     }
 }
 
 void drawLizard(Entity entity)
 {
-    //DrawRectangleLinesEx(iguana.data.hitbox, 2, BLUE);
+    DrawRectangleLinesEx(entity.hitbox.rect, 2, BLUE);
 }
 
 void drawSawblade(Entity entity)

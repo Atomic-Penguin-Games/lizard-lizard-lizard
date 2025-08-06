@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <raylib.h>
 #include "definitions.h"
 #include "randomizer.h"
@@ -5,6 +6,7 @@
 #include "entityManager.h"
 #include "player.h"
 #include "inputManager.h"
+#include "graphicsManager.h"
 
 int main(void)
 {
@@ -19,11 +21,10 @@ int main(void)
     initRandomizer();
 
     EntityManager manager = initManager();
-    Texture sprite = LoadTexture("res/animationSpritesheet.png");
-    Texture iguanaSprite = LoadTexture("res/lizardEmoji.png");
-    Texture sawSprite = LoadTexture("res/circular_saw_blade.png");
+    GraphicsManager gm = initGraphicsManager();
 
-    Player player = createPlayer(&sprite);
+    Player player = createPlayer(&gm.playerSpritesheet);
+    initHitboxPointers(&player);  // Initialize hitbox pointers after creation
 
     while (!WindowShouldClose())
     {
@@ -31,14 +32,34 @@ int main(void)
       
       Vector2 velocity = getPlayerInput();
       updatePlayer(&player, velocity, dT, screenWidth, screenHeight);
+      updateManager(&manager, &gm, dT, screenWidth, screenHeight);
       updateEntities(&manager, dT, screenWidth);
-    
+      CollisionType collisionType = checkForCollisions(&manager, player.hitboxes);
+      printf("CollisionType: %d\n", collisionType);
+      
+      switch(collisionType)
+      {
+        case SCORE_COLLISION:
+          score++;
+          playScoreSound();
+          playAnimation(&player);
+          break;
+        case DEATH_COLLISION:
+          //TODO Death
+          break;
+        default:
+          break;
+      };
       BeginDrawing();
       ClearBackground(RED);
       drawEntities(&manager);
       drawPlayer(&player);
       DrawText(TextFormat("%d", score), screenWidth/2, 30, 60, RAYWHITE);
-
+      if (IsKeyPressed(KEY_SPACE))
+      {
+        playScoreSound();
+        playAnimation(&player);
+      }
       EndDrawing();
     }
 

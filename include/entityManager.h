@@ -1,4 +1,5 @@
 #pragma once
+#include "graphicsManager.h"
 #include "raylib.h"
 #include "definitions.h"
 
@@ -7,6 +8,13 @@ typedef enum
     SAW,
     LIZARD
 } EntityType;
+
+typedef enum
+{
+    NO_COLLISION,
+    DEATH_COLLISION,
+    SCORE_COLLISION
+} CollisionType;
 
 typedef enum 
 {
@@ -33,7 +41,7 @@ typedef struct Entity
 {
     EntityType entityType;
     Vector2 position;
-    Texture sprite;
+    Texture *sprite;
     Hitbox hitbox;
     Vector2 hitboxOffset;
     float rotation;
@@ -49,11 +57,12 @@ typedef struct EntityManager
 } EntityManager;
 
 EntityManager initManager();
-void updateManager(EntityManager *manager, float deltaTime,
+void updateManager(EntityManager *manager, GraphicsManager *gm, float deltaTime,
     int screenWidth, int screenHeight);
-void spawnEntity(EntityManager *manager, EntityType type, Texture sprite,
+void spawnEntity(EntityManager *manager, EntityType type, Texture *sprite,
 int screenWidth, int screenHeight);
 void updateEntities(EntityManager *manager, float deltaTime, int screenwidth);
+CollisionType checkForCollisions(EntityManager *manager, Rectangle* playerHitboxes[]);
 void drawEntities(EntityManager *manager);
 void removeEntity(EntityManager *manager, int index);
 void drawSawblade(Entity entity);

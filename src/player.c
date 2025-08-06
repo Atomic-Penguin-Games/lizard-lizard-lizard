@@ -1,5 +1,6 @@
 #include "player.h"
 #include "definitions.h"
+#include <stdio.h>
 
 // Static variables for animation frame calculations
 static int frameWidth = 0;
@@ -32,13 +33,33 @@ Player createPlayer(Texture *spriteSheet)
             PLAYER_SPAWN_LOCATION.y + PLAYER_HEADBOX_Y_OFFSET,
             PLAYER_HEADBOX_WIDTH, PLAYER_HEADBOX_HEIGHT
         },
+        .tailbox = {
+            PLAYER_SPAWN_LOCATION.x + PLAYER_TAILBOX_X_OFFSET,
+            PLAYER_SPAWN_LOCATION.y + PLAYER_TAILBOX_Y_OFFSET,
+            PLAYER_TAILBOX_WIDTH, PLAYER_TAILBOX_HEIGHT
+        },
+        .lowerTailbox = {
+            PLAYER_SPAWN_LOCATION.x + PLAYER_LOWER_TAILBOX_X_OFFSET,
+            PLAYER_SPAWN_LOCATION.y + PLAYER_LOWER_TAILBOX_Y_OFFSET,
+            PLAYER_LOWER_TAILBOX_WIDTH, PLAYER_LOWER_TAILBOX_HEIGHT
+        },
         .isAnimating = false,
         .currentFrame = 0,
         .animationTimer = 0.0f,
-        .frameTime = 0.1f  // 10 FPS animation
+        .frameTime = 0.03f  // 10 FPS animation
     };
+    
     updateHitboxes(&player);
+    
     return player;
+}
+
+void initHitboxPointers(Player *player)
+{
+    player->hitboxes[0] = &player->hitbox;
+    player->hitboxes[1] = &player->headbox;
+    player->hitboxes[2] = &player->tailbox;
+    player->hitboxes[3] = &player->lowerTailbox;
 }
 
 void drawPlayer(Player *player)
@@ -87,7 +108,8 @@ void drawPlayer(Player *player)
     {
         DrawRectangleLinesEx(player->hitbox, 2, BLUE);
         DrawRectangleLinesEx(player->headbox, 2, GREEN);
-        //DrawRectangleRec(player.hitbox, GREEN); // Assuming you want to visualize the hitbox in green
+        DrawRectangleLinesEx(player->tailbox, 2, PINK);
+        DrawRectangleLinesEx(player->lowerTailbox, 2, BLACK);
     }
 }
 
@@ -131,18 +153,23 @@ int screenWidth, int screenHeight)
             }
         }
     }
-    
+
     updateHitboxes(player);
 }
 
 void updateHitboxes(Player *player)
 {
-    
     player->hitbox.x = player->position.x + PLAYER_HITBOX_X_OFFSET;
     player->hitbox.y = player->position.y + PLAYER_HITBOX_Y_OFFSET;
     
     player->headbox.x = player->position.x + PLAYER_HEADBOX_X_OFFSET;
     player->headbox.y = player->position.y + PLAYER_HEADBOX_Y_OFFSET;
+    
+    player->tailbox.x = player->position.x + PLAYER_TAILBOX_X_OFFSET;
+    player->tailbox.y = player->position.y + PLAYER_TAILBOX_Y_OFFSET;
+    
+    player->lowerTailbox.x = player->position.x + PLAYER_LOWER_TAILBOX_X_OFFSET;
+    player->lowerTailbox.y = player->position.y + PLAYER_LOWER_TAILBOX_Y_OFFSET;
 }
 
 void playAnimation(Player *player)
@@ -151,3 +178,34 @@ void playAnimation(Player *player)
     player->currentFrame = 0;
     player->animationTimer = 0.0f;
 }
+
+//used to resize hitboxes to figure out the values to set in definitions.
+//updateHitboxes() needs to be disabled or it overwrites whatever is modified here.
+// void resizeHitboxes()
+// {
+//     if (IsKeyPressed(KEY_W)) player->lowerTailbox.y -= 5;
+//     if (IsKeyPressed(KEY_S)) player->lowerTailbox.y += 5;
+//     if (IsKeyPressed(KEY_A)) player->lowerTailbox.x -= 5;
+//     if (IsKeyPressed(KEY_D)) player->lowerTailbox.x += 5;
+
+//     if (IsKeyPressed(KEY_I)) player->lowerTailbox.height += 5;
+//     if (IsKeyPressed(KEY_K)) player->lowerTailbox.height -= 5;
+//     if (IsKeyPressed(KEY_J)) player->lowerTailbox.width -= 5;
+//     if (IsKeyPressed(KEY_L)) player->lowerTailbox.width += 5;
+//     // Print lowerTailbox data when P is pressed
+//     if (IsKeyPressed(KEY_P))
+//     {
+//         printf("Player lowerTailbox Data:\n");
+//         printf("  Position: (%.2f, %.2f)\n", player->position.x, player->position.y);
+//         printf("  lowerTailbox: x=%.2f, y=%.2f, w=%.2f, h=%.2f\n", 
+//                player->lowerTailbox.x, player->lowerTailbox.y, player->lowerTailbox.width, player->lowerTailbox.height);
+//         // printf("  lowerTailbox: x=%.2f, y=%.2f, w=%.2f, h=%.2f\n", 
+//         //        player->lowerTailbox.x, player->lowerTailbox.y, player->lowerTailbox.width, player->lowerTailbox.height);
+//         // printf("  lowerTailbox: x=%.2f, y=%.2f, w=%.2f, h=%.2f\n", 
+//         //        player->lowerTailbox.x, player->lowerTailbox.y, player->lowerTailbox.width, player->lowerTailbox.height);
+//         // printf("  Animation: frame=%d, animating=%s\n", 
+//         //        player->currentFrame, player->isAnimating ? "true" : "false");
+//         printf("---\n");
+//     }
+
+// }

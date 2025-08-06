@@ -1,5 +1,6 @@
 #pragma once
 #include <raylib.h>
+#include "definitions.h"
 
 typedef struct Player
 {
@@ -7,8 +8,13 @@ typedef struct Player
   Vector2 velocity;
   Rectangle hitbox;
   Rectangle headbox;
+  Rectangle tailbox;
+  Rectangle lowerTailbox;
   Texture spriteSheet;
   Vector2 hitboxOffset;
+  
+  // Array of pointers to all hitboxes for easy collision checking
+  Rectangle *hitboxes[PLAYER_HITBOX_COUNT];
   
   // Animation fields
   bool isAnimating;
@@ -18,6 +24,7 @@ typedef struct Player
 } Player;
 
 Player createPlayer(Texture *sprite);
+void initHitboxPointers(Player *player);
 void drawPlayer(Player *player);
 void updatePlayer(Player *player, Vector2 velocity, float deltaTime,
     int screenWidth, int screenHeight);
