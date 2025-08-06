@@ -1,6 +1,36 @@
 #include "entityManager.h"
 #include "randomizer.h"
-#include <stdio.h>
+
+EntityManager initManager()
+{
+    EntityManager manager = {
+      .entities = {},
+      .count = 0,
+      .spawnTimer = OBJECT_SPAWN_RATE_MIN,
+      .nextSpawnTime = 0.25f
+    };
+    return manager;
+}
+
+void updateManager(EntityManager *manager, float deltaTime, 
+    int screenWidth, int screenHeight)
+{
+    manager->spawnTimer += deltaTime;
+    if (manager->spawnTimer >= manager->nextSpawnTime)
+      {
+        // Randomly choose between spawning an iguana or sawblade (50/50 chance)
+        if (randomNum(2) == 1)
+        {
+          spawnEntity(&manager, LIZARD, iguanaSprite, screenWidth, screenHeight);
+        }
+        else
+        {
+          spawnEntity(&manager, SAW, sawSprite, screenWidth, screenHeight);
+        }
+        manager->spawnTimer = 0.0f;
+        manager->nextSpawnTime = randomSpawnTime(); // Set new random spawn time
+      }
+}
 
 void spawnEntity(EntityManager *manager, EntityType type, Texture sprite,
     int screenWidth, int screenHeight)
@@ -25,8 +55,6 @@ void spawnEntity(EntityManager *manager, EntityType type, Texture sprite,
                 }
             };
             entity.scale = SAW_SCALE;
-              
-            
         } else if (type == LIZARD)
         {
             entity.hitbox = (Hitbox){

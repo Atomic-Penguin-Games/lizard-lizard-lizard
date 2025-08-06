@@ -45,8 +45,12 @@ typedef struct EntityManager
     Entity entities[MAX_ENTITIES];
     int count;
     float spawnTimer;
+    float nextSpawnTime;
 } EntityManager;
 
+EntityManager initManager();
+void updateManager(EntityManager *manager, float deltaTime,
+    int screenWidth, int screenHeight);
 void spawnEntity(EntityManager *manager, EntityType type, Texture sprite,
 int screenWidth, int screenHeight);
 void updateEntities(EntityManager *manager, float deltaTime, int screenwidth);
