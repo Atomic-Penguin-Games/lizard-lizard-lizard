@@ -1,6 +1,7 @@
-#include "definitions.h"
 #include "randomizer.h"
-
+#include "definitions.h"
+#include <stdlib.h>
+#include <time.h>
 
 void initRandomizer()
 {

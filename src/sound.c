@@ -1,5 +1,6 @@
 #include "sound.h"
-
+#include "raylib.h"
+#include "randomizer.h"
 
 Sound scoreSounds[3];
 
