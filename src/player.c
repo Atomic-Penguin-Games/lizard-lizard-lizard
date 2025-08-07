@@ -23,7 +23,7 @@ Player createPlayer(Texture *spriteSheet)
     
     Player player = {
         .position = PLAYER_SPAWN_LOCATION,
-        .spriteSheet = *spriteSheet,
+        .spriteSheet = spriteSheet,  // Store pointer instead of copying texture
         .hitbox = {PLAYER_SPAWN_LOCATION.x + PLAYER_HITBOX_X_OFFSET,
                 PLAYER_SPAWN_LOCATION.y + PLAYER_HITBOX_Y_OFFSET,
                 PLAYER_HITBOX_WIDTH, PLAYER_HITBOX_HEIGHT
@@ -89,7 +89,7 @@ void drawPlayer(Player *player)
             frameHeight * PLAYER_SPRITE_SCALE * 2.0f  // Double the size
         };
         
-        DrawTexturePro(player->spriteSheet, source, dest, (Vector2){0, 0}, 0.0f, RAYWHITE);
+        DrawTexturePro(*player->spriteSheet, source, dest, (Vector2){0, 0}, 0.0f, RAYWHITE);
     }
     else
     {
@@ -114,7 +114,7 @@ void drawPlayer(Player *player)
             frameHeight * PLAYER_SPRITE_SCALE * 2.0f  // Match animation scale
         };
         
-        DrawTexturePro(player->spriteSheet, source, dest, (Vector2){0, 0}, 0.0f, RAYWHITE);
+        DrawTexturePro(*player->spriteSheet, source, dest, (Vector2){0, 0}, 0.0f, RAYWHITE);
     }
     
     if (DEBUG_MODE)

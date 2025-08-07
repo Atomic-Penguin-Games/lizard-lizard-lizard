@@ -97,18 +97,11 @@ void updateEntities(EntityManager *manager, float deltaTime, int screenwidth)
 }
 
 CollisionType checkForCollisions(EntityManager *manager, Rectangle* playerHitboxes[])
-{
-    printf("Checking collisions with %d entities\n", manager->count);
-    
+{   
     for (int i = 0; i < manager->count; i++)
     {
         if (manager->entities[i].entityType == SAW)
         {
-            printf("SAW entity %d at (%.2f, %.2f), circle center (%.2f, %.2f), radius %.2f\n", 
-                   i, manager->entities[i].position.x, manager->entities[i].position.y,
-                   manager->entities[i].hitbox.circle.center.x, manager->entities[i].hitbox.circle.center.y,
-                   manager->entities[i].hitbox.circle.radius);
-                   
             for (int j = 0; j < PLAYER_HITBOX_COUNT; j++)
             {          
                 if (CheckCollisionCircleRec(manager->entities[i].hitbox.circle.center,
@@ -138,26 +131,26 @@ void drawEntities(EntityManager *manager)
 {
     for (int i = 0; i < manager->count; i++)
     {
-        Entity entity = manager->entities[i];
-        DrawTextureEx(*entity.sprite, entity.position, entity.rotation,
-            entity.scale, RAYWHITE);
+        Entity *entity = &manager->entities[i];  // Use pointer instead of copy
+        DrawTextureEx(*entity->sprite, entity->position, entity->rotation,
+            entity->scale, RAYWHITE);
         
-        if (manager->entities->entityType == LIZARD)
+        if (entity->entityType == LIZARD)
         {
-            drawLizard(manager->entities[i]);
-        } else if (manager->entities->entityType == SAW)
+            drawLizard(entity);  // Pass pointer for efficiency
+        } else if (entity->entityType == SAW)
         {
-            drawSawblade(manager->entities[i]);
+            drawSawblade(entity);
         }
     }
 }
 
-void drawLizard(Entity entity)
+void drawLizard(const Entity *entity)
 {
-    DrawRectangleLinesEx(entity.hitbox.rect, 2, BLUE);
+    DrawRectangleLinesEx(entity->hitbox.rect, 2, BLUE);
 }
 
-void drawSawblade(Entity entity)
+void drawSawblade(const Entity *entity)
 {
 
 }

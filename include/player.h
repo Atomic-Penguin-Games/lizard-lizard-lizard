@@ -10,7 +10,7 @@ typedef struct Player
   Rectangle headbox;
   Rectangle tailbox;
   Rectangle lowerTailbox;
-  Texture spriteSheet;
+  Texture *spriteSheet;  // Use pointer instead of copy
   Vector2 hitboxOffset;
   
   // Array of pointers to all hitboxes for easy collision checking

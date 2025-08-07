@@ -65,5 +65,5 @@ void updateEntities(EntityManager *manager, float deltaTime, int screenwidth);
 CollisionType checkForCollisions(EntityManager *manager, Rectangle* playerHitboxes[]);
 void drawEntities(EntityManager *manager);
 void removeEntity(EntityManager *manager, int index);
-void drawSawblade(Entity entity);
-void drawLizard(Entity entity);
+void drawSawblade(const Entity *entity);
+void drawLizard(const Entity *entity);

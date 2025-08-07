@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 #include <raylib.h>
 #include "definitions.h"
 #include "randomizer.h"
@@ -10,15 +11,25 @@
 
 int main(void)
 {
-    const int screenWidth = SCREEN_WIDTH;
-    const int screenHeight = SCREEN_HEIGHT;
+    // Virtual resolution (fixed game coordinates)
+    const int virtualScreenWidth = SCREEN_WIDTH;
+    const int virtualScreenHeight = SCREEN_HEIGHT;
+    
+    // Actual window size (can be different/resizable)
+    const int windowWidth = SCREEN_WIDTH;
+    const int windowHeight = SCREEN_HEIGHT;
+    
     int score = 0;
 
     // Enable fullscreen support for web builds
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     
-    InitWindow(screenWidth, screenHeight, "Lizard Meme");
+    InitWindow(windowWidth, windowHeight, "Lizard Meme");
     SetTargetFPS(60);
+
+    // Create render texture for virtual resolution
+    RenderTexture2D target = LoadRenderTexture(virtualScreenWidth, virtualScreenHeight);
+    SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR);
 
     initSoundSystem();
     initRandomizer();
@@ -33,10 +44,17 @@ int main(void)
     {
       float dT = GetFrameTime(); //deltaTime
       
+      // Get current window size for scaling calculations
+      int currentWindowWidth = GetScreenWidth();
+      int currentWindowHeight = GetScreenHeight();
+      
+      // Calculate scale to fit virtual resolution to window
+      float scale = fminf((float)currentWindowWidth/virtualScreenWidth, (float)currentWindowHeight/virtualScreenHeight);
+      
       Vector2 velocity = getPlayerInput();
-      updatePlayer(&player, velocity, dT, screenWidth, screenHeight);
-      updateManager(&manager, &gm, dT, screenWidth, screenHeight);
-      updateEntities(&manager, dT, screenWidth);
+      updatePlayer(&player, velocity, dT, virtualScreenWidth, virtualScreenHeight);
+      updateManager(&manager, &gm, dT, virtualScreenWidth, virtualScreenHeight);
+      updateEntities(&manager, dT, virtualScreenWidth);
       CollisionType collisionType = checkForCollisions(&manager, player.hitboxes);
       
       switch(collisionType)
@@ -52,19 +70,38 @@ int main(void)
         default:
           break;
       };
+      
+      // Draw everything to the virtual resolution render texture
+      BeginTextureMode(target);
+        ClearBackground(RED);
+        drawEntities(&manager);
+        drawPlayer(&player);
+        DrawText(TextFormat("%d", score), virtualScreenWidth/2, 30, 60, RAYWHITE);
+        if (IsKeyPressed(KEY_SPACE))
+        {
+          playScoreSound();
+          playAnimation(&player);
+        }
+      EndTextureMode();
+      
+      // Draw the scaled render texture to the actual window
       BeginDrawing();
-      ClearBackground(RED);
-      drawEntities(&manager);
-      drawPlayer(&player);
-      DrawText(TextFormat("%d", score), screenWidth/2, 30, 60, RAYWHITE);
-      if (IsKeyPressed(KEY_SPACE))
-      {
-        playScoreSound();
-        playAnimation(&player);
-      }
+        ClearBackground(BLACK);
+        
+        // Calculate position to center the scaled virtual screen
+        int offsetX = (currentWindowWidth - (int)(virtualScreenWidth * scale)) / 2;
+        int offsetY = (currentWindowHeight - (int)(virtualScreenHeight * scale)) / 2;
+        
+        // Draw the virtual screen scaled to fit the window
+        Rectangle source = { 0, 0, (float)target.texture.width, -(float)target.texture.height };
+        Rectangle dest = { offsetX, offsetY, virtualScreenWidth * scale, virtualScreenHeight * scale };
+        
+        DrawTexturePro(target.texture, source, dest, (Vector2){0, 0}, 0.0f, WHITE);
       EndDrawing();
     }
 
+    // Cleanup
+    UnloadRenderTexture(target);
     return 0;
     CloseWindow();
 }
