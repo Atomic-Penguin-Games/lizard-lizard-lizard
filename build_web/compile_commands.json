@@ -1,0 +1,44 @@
+[
+{
+  "directory": "/home/piccolo/Dev/games/raylib/lizard-meme-game/build_web",
+  "command": "/home/piccolo/Dev/games/raylib/emsdk/upstream/emscripten/emcc  @CMakeFiles/lizard_meme.dir/includes_C.rsp -O3 -DNDEBUG -o CMakeFiles/lizard_meme.dir/src/entityManager.c.o -c /home/piccolo/Dev/games/raylib/lizard-meme-game/src/entityManager.c",
+  "file": "/home/piccolo/Dev/games/raylib/lizard-meme-game/src/entityManager.c",
+  "output": "CMakeFiles/lizard_meme.dir/src/entityManager.c.o"
+},
+{
+  "directory": "/home/piccolo/Dev/games/raylib/lizard-meme-game/build_web",
+  "command": "/home/piccolo/Dev/games/raylib/emsdk/upstream/emscripten/emcc  @CMakeFiles/lizard_meme.dir/includes_C.rsp -O3 -DNDEBUG -o CMakeFiles/lizard_meme.dir/src/graphicsManager.c.o -c /home/piccolo/Dev/games/raylib/lizard-meme-game/src/graphicsManager.c",
+  "file": "/home/piccolo/Dev/games/raylib/lizard-meme-game/src/graphicsManager.c",
+  "output": "CMakeFiles/lizard_meme.dir/src/graphicsManager.c.o"
+},
+{
+  "directory": "/home/piccolo/Dev/games/raylib/lizard-meme-game/build_web",
+  "command": "/home/piccolo/Dev/games/raylib/emsdk/upstream/emscripten/emcc  @CMakeFiles/lizard_meme.dir/includes_C.rsp -O3 -DNDEBUG -o CMakeFiles/lizard_meme.dir/src/inputManager.c.o -c /home/piccolo/Dev/games/raylib/lizard-meme-game/src/inputManager.c",
+  "file": "/home/piccolo/Dev/games/raylib/lizard-meme-game/src/inputManager.c",
+  "output": "CMakeFiles/lizard_meme.dir/src/inputManager.c.o"
+},
+{
+  "directory": "/home/piccolo/Dev/games/raylib/lizard-meme-game/build_web",
+  "command": "/home/piccolo/Dev/games/raylib/emsdk/upstream/emscripten/emcc  @CMakeFiles/lizard_meme.dir/includes_C.rsp -O3 -DNDEBUG -o CMakeFiles/lizard_meme.dir/src/main.c.o -c /home/piccolo/Dev/games/raylib/lizard-meme-game/src/main.c",
+  "file": "/home/piccolo/Dev/games/raylib/lizard-meme-game/src/main.c",
+  "output": "CMakeFiles/lizard_meme.dir/src/main.c.o"
+},
+{
+  "directory": "/home/piccolo/Dev/games/raylib/lizard-meme-game/build_web",
+  "command": "/home/piccolo/Dev/games/raylib/emsdk/upstream/emscripten/emcc  @CMakeFiles/lizard_meme.dir/includes_C.rsp -O3 -DNDEBUG -o CMakeFiles/lizard_meme.dir/src/player.c.o -c /home/piccolo/Dev/games/raylib/lizard-meme-game/src/player.c",
+  "file": "/home/piccolo/Dev/games/raylib/lizard-meme-game/src/player.c",
+  "output": "CMakeFiles/lizard_meme.dir/src/player.c.o"
+},
+{
+  "directory": "/home/piccolo/Dev/games/raylib/lizard-meme-game/build_web",
+  "command": "/home/piccolo/Dev/games/raylib/emsdk/upstream/emscripten/emcc  @CMakeFiles/lizard_meme.dir/includes_C.rsp -O3 -DNDEBUG -o CMakeFiles/lizard_meme.dir/src/randomizer.c.o -c /home/piccolo/Dev/games/raylib/lizard-meme-game/src/randomizer.c",
+  "file": "/home/piccolo/Dev/games/raylib/lizard-meme-game/src/randomizer.c",
+  "output": "CMakeFiles/lizard_meme.dir/src/randomizer.c.o"
+},
+{
+  "directory": "/home/piccolo/Dev/games/raylib/lizard-meme-game/build_web",
+  "command": "/home/piccolo/Dev/games/raylib/emsdk/upstream/emscripten/emcc  @CMakeFiles/lizard_meme.dir/includes_C.rsp -O3 -DNDEBUG -o CMakeFiles/lizard_meme.dir/src/sound.c.o -c /home/piccolo/Dev/games/raylib/lizard-meme-game/src/sound.c",
+  "file": "/home/piccolo/Dev/games/raylib/lizard-meme-game/src/sound.c",
+  "output": "CMakeFiles/lizard_meme.dir/src/sound.c.o"
+}
+]

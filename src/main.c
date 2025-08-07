@@ -10,8 +10,8 @@
 
 int main(void)
 {
-    const int screenWidth = 1920;
-    const int screenHeight = 1080;
+    const int screenWidth = SCREEN_WIDTH;
+    const int screenHeight = SCREEN_HEIGHT;
     int score = 0;
 
     InitWindow(screenWidth, screenHeight, "Lizard Meme");

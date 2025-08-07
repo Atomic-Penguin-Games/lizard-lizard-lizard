@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/piccolo/Dev/games/raylib/lizard-meme-game/build_web/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

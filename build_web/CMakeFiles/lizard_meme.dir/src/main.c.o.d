@@ -1,0 +1,37 @@
+CMakeFiles/lizard_meme.dir/src/main.c.o: \
+  /home/piccolo/Dev/games/raylib/lizard-meme-game/src/main.c \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/emscripten/cache/sysroot/include/stdio.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/emscripten/cache/sysroot/include/wasi/api.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/lib/clang/22/include/stddef.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/emscripten/cache/sysroot/include/stddef.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/lib/clang/22/include/__stddef_header_macro.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/lib/clang/22/include/__stddef_ptrdiff_t.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/lib/clang/22/include/__stddef_size_t.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/lib/clang/22/include/__stddef_wchar_t.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/lib/clang/22/include/__stddef_null.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/lib/clang/22/include/__stddef_max_align_t.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/lib/clang/22/include/__stddef_offsetof.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/lib/clang/22/include/stdint.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/emscripten/cache/sysroot/include/stdint.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/emscripten/cache/sysroot/include/bits/alltypes.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/emscripten/cache/sysroot/include/bits/stdint.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/emscripten/cache/sysroot/include/features.h \
+  /home/piccolo/Dev/games/raylib/lizard-meme-game/../raylib-web/src/raylib.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/emscripten/cache/sysroot/include/compat/stdarg.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/lib/clang/22/include/stdarg.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/emscripten/cache/sysroot/include/stdarg.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/lib/clang/22/include/__stdarg_header_macro.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/lib/clang/22/include/__stdarg___gnuc_va_list.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/lib/clang/22/include/__stdarg_va_list.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/lib/clang/22/include/__stdarg_va_arg.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/lib/clang/22/include/__stdarg___va_copy.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/lib/clang/22/include/__stdarg_va_copy.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/lib/clang/22/include/stdbool.h \
+  /home/piccolo/Dev/games/raylib/emsdk/upstream/emscripten/cache/sysroot/include/stdbool.h \
+  /home/piccolo/Dev/games/raylib/lizard-meme-game/include/definitions.h \
+  /home/piccolo/Dev/games/raylib/lizard-meme-game/include/randomizer.h \
+  /home/piccolo/Dev/games/raylib/lizard-meme-game/include/sound.h \
+  /home/piccolo/Dev/games/raylib/lizard-meme-game/include/entityManager.h \
+  /home/piccolo/Dev/games/raylib/lizard-meme-game/include/graphicsManager.h \
+  /home/piccolo/Dev/games/raylib/lizard-meme-game/include/player.h \
+  /home/piccolo/Dev/games/raylib/lizard-meme-game/include/inputManager.h
