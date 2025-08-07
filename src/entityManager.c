@@ -110,32 +110,21 @@ CollisionType checkForCollisions(EntityManager *manager, Rectangle* playerHitbox
                    manager->entities[i].hitbox.circle.radius);
                    
             for (int j = 0; j < PLAYER_HITBOX_COUNT; j++)
-            {
-                printf("  Checking against player hitbox %d: (%.2f, %.2f, %.2f, %.2f)\n",
-                       j, playerHitboxes[j]->x, playerHitboxes[j]->y, 
-                       playerHitboxes[j]->width, playerHitboxes[j]->height);
-                       
+            {          
                 if (CheckCollisionCircleRec(manager->entities[i].hitbox.circle.center,
                     manager->entities[i].hitbox.circle.radius, *playerHitboxes[j]))
                 {
-                    printf("  DEATH COLLISION detected with hitbox %d!\n", j);
                     removeEntity(manager, i);
                     return DEATH_COLLISION;
                 }
             }
         } else if (manager->entities[i].entityType == LIZARD)
         {
-            printf("LIZARD entity %d at (%.2f, %.2f), rect (%.2f, %.2f, %.2f, %.2f)\n", 
-                   i, manager->entities[i].position.x, manager->entities[i].position.y,
-                   manager->entities[i].hitbox.rect.x, manager->entities[i].hitbox.rect.y,
-                   manager->entities[i].hitbox.rect.width, manager->entities[i].hitbox.rect.height);
-                   
             for (int j = 0; j < PLAYER_HITBOX_COUNT; j++)
             {
                 if (CheckCollisionRecs(manager->entities[i].hitbox.rect,
                 *playerHitboxes[j]))
                 {
-                    printf("  SCORE COLLISION detected with hitbox %d!\n", j);
                     removeEntity(manager, i);
                     return SCORE_COLLISION;
                 }

@@ -1,8 +1,8 @@
 #pragma once
 #include <raylib.h>
 
-#define SCREEN_WIDTH 1280
-#define SCREEN_HEIGHT 720
+#define SCREEN_WIDTH 1920
+#define SCREEN_HEIGHT 1080
 
 #define PLAYER_SPAWN_LOCATION (Vector2){50, 50}
 

@@ -14,6 +14,9 @@ int main(void)
     const int screenHeight = SCREEN_HEIGHT;
     int score = 0;
 
+    // Enable fullscreen support for web builds
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    
     InitWindow(screenWidth, screenHeight, "Lizard Meme");
     SetTargetFPS(60);
 
@@ -35,7 +38,6 @@ int main(void)
       updateManager(&manager, &gm, dT, screenWidth, screenHeight);
       updateEntities(&manager, dT, screenWidth);
       CollisionType collisionType = checkForCollisions(&manager, player.hitboxes);
-      printf("CollisionType: %d\n", collisionType);
       
       switch(collisionType)
       {
