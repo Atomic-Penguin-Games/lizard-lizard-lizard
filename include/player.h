@@ -21,6 +21,9 @@ typedef struct Player
   int currentFrame;
   float animationTimer;
   float frameTime;
+  
+  // Facing direction
+  bool facingLeft;
 } Player;
 
 Player createPlayer(Texture *sprite);

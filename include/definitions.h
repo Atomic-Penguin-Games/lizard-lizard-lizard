@@ -3,7 +3,7 @@
 
 #define PLAYER_SPAWN_LOCATION (Vector2){50, 50}
 
-#define PLAYER_SPEED 420.0f
+#define PLAYER_SPEED 590.0f
 #define PLAYER_SPRITE_WIDTH 210
 #define PLAYER_SPRITE_HEIGHT 190
 #define PLAYER_SPRITE_SCALE 0.2f
@@ -25,7 +25,7 @@
 #define PLAYER_LOWER_TAILBOX_WIDTH 35
 #define PLAYER_LOWER_TAILBOX_HEIGHT 30
 
-#define LIZARD_SPEED 570.0f
+#define LIZARD_SPEED 565.0f
 #define SAW_SPEED 600.0f
 #define OBJECT_SPAWN_RATE_MIN 0.65f // Minimum spawn time in seconds
 #define OBJECT_SPAWN_RATE_MAX 1.7f // Maximum spawn time in seconds

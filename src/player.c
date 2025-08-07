@@ -11,7 +11,7 @@ static void initFrameData(Texture *spriteSheet)
 {
     if (!frameDataInitialized) {
         // Calculate based on actual texture dimensions - no gap assumption
-        frameWidth = spriteSheet->width / 11;  // Simple division by frame count
+        frameWidth = spriteSheet->width / 9;  // Simple division by frame count
         frameHeight = spriteSheet->height;
         frameDataInitialized = true;
     }
@@ -46,7 +46,8 @@ Player createPlayer(Texture *spriteSheet)
         .isAnimating = false,
         .currentFrame = 0,
         .animationTimer = 0.0f,
-        .frameTime = 0.03f  // 10 FPS animation
+        .frameTime = 0.03f,  // 10 FPS animation
+        .facingLeft = false  // Start facing right
     };
     
     updateHitboxes(&player);
@@ -74,6 +75,12 @@ void drawPlayer(Player *player)
             frameHeight
         };
         
+        // Flip sprite horizontally if facing left
+        if (player->facingLeft)
+        {
+            source.width = -frameWidth;  // Negative width flips horizontally
+        }
+        
         // Draw the animation frame
         Rectangle dest = {
             player->position.x,
@@ -93,6 +100,12 @@ void drawPlayer(Player *player)
             frameWidth,
             frameHeight
         };
+        
+        // Flip sprite horizontally if facing left
+        if (player->facingLeft)
+        {
+            source.width = -frameWidth;  // Negative width flips horizontally
+        }
         
         Rectangle dest = {
             player->position.x,
@@ -116,6 +129,16 @@ void drawPlayer(Player *player)
 void updatePlayer(Player *player, Vector2 velocity, float deltaTime,
 int screenWidth, int screenHeight)
 {
+    // Update facing direction based on movement
+    if (velocity.x < 0)
+    {
+        player->facingLeft = true;
+    }
+    else if (velocity.x > 0)
+    {
+        player->facingLeft = false;
+    }
+    
     player->position.x += velocity.x * deltaTime;
     player->position.y += velocity.y * deltaTime;
 
@@ -159,17 +182,40 @@ int screenWidth, int screenHeight)
 
 void updateHitboxes(Player *player)
 {
-    player->hitbox.x = player->position.x + PLAYER_HITBOX_X_OFFSET;
-    player->hitbox.y = player->position.y + PLAYER_HITBOX_Y_OFFSET;
-    
-    player->headbox.x = player->position.x + PLAYER_HEADBOX_X_OFFSET;
-    player->headbox.y = player->position.y + PLAYER_HEADBOX_Y_OFFSET;
-    
-    player->tailbox.x = player->position.x + PLAYER_TAILBOX_X_OFFSET;
-    player->tailbox.y = player->position.y + PLAYER_TAILBOX_Y_OFFSET;
-    
-    player->lowerTailbox.x = player->position.x + PLAYER_LOWER_TAILBOX_X_OFFSET;
-    player->lowerTailbox.y = player->position.y + PLAYER_LOWER_TAILBOX_Y_OFFSET;
+    if (player->facingLeft)
+    {
+        // When facing left, hitboxes need to be mirrored from the right edge
+        // We need to calculate the sprite width at the current scale
+        float spriteWidth = frameWidth * PLAYER_SPRITE_SCALE * 2.0f;  // Same scale as used in drawing
+        
+        // Formula: rightEdge - (originalOffset + width) for the new left edge
+        player->hitbox.x = player->position.x + spriteWidth - (PLAYER_HITBOX_X_OFFSET + PLAYER_HITBOX_WIDTH);
+        player->hitbox.y = player->position.y + PLAYER_HITBOX_Y_OFFSET;
+        
+        player->headbox.x = player->position.x + spriteWidth - (PLAYER_HEADBOX_X_OFFSET + PLAYER_HEADBOX_WIDTH);
+        player->headbox.y = player->position.y + PLAYER_HEADBOX_Y_OFFSET;
+        
+        player->tailbox.x = player->position.x + spriteWidth - (PLAYER_TAILBOX_X_OFFSET + PLAYER_TAILBOX_WIDTH);
+        player->tailbox.y = player->position.y + PLAYER_TAILBOX_Y_OFFSET;
+        
+        player->lowerTailbox.x = player->position.x + spriteWidth - (PLAYER_LOWER_TAILBOX_X_OFFSET + PLAYER_LOWER_TAILBOX_WIDTH);
+        player->lowerTailbox.y = player->position.y + PLAYER_LOWER_TAILBOX_Y_OFFSET;
+    }
+    else
+    {
+        // Normal hitbox positioning (facing right)
+        player->hitbox.x = player->position.x + PLAYER_HITBOX_X_OFFSET;
+        player->hitbox.y = player->position.y + PLAYER_HITBOX_Y_OFFSET;
+        
+        player->headbox.x = player->position.x + PLAYER_HEADBOX_X_OFFSET;
+        player->headbox.y = player->position.y + PLAYER_HEADBOX_Y_OFFSET;
+        
+        player->tailbox.x = player->position.x + PLAYER_TAILBOX_X_OFFSET;
+        player->tailbox.y = player->position.y + PLAYER_TAILBOX_Y_OFFSET;
+        
+        player->lowerTailbox.x = player->position.x + PLAYER_LOWER_TAILBOX_X_OFFSET;
+        player->lowerTailbox.y = player->position.y + PLAYER_LOWER_TAILBOX_Y_OFFSET;
+    }
 }
 
 void playAnimation(Player *player)
