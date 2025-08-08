@@ -29,7 +29,7 @@ int main(void)
 
     // Create render texture for virtual resolution
     RenderTexture2D target = LoadRenderTexture(virtualScreenWidth, virtualScreenHeight);
-    SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR);
+    SetTextureFilter(target.texture, TEXTURE_FILTER_POINT);
 
     initSoundSystem();
     initRandomizer();
