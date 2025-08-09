@@ -1,4 +1,5 @@
 #include "entityManager.h"
+#include "definitions.h"
 #include "randomizer.h"
 #include <stdio.h>
 
@@ -81,6 +82,7 @@ void updateEntities(EntityManager *manager, float deltaTime, int screenwidth)
         {
             entity->position.x -= SAW_SPEED * deltaTime;
             entity->hitbox.circle.center.x -= SAW_SPEED * deltaTime;
+            entity->rotation -= SAW_ROTATION_SPEED * deltaTime;
         } else if (entity->entityType == LIZARD)
         {
             entity->position.x -= LIZARD_SPEED * deltaTime;
@@ -132,8 +134,7 @@ void drawEntities(EntityManager *manager)
     for (int i = 0; i < manager->count; i++)
     {
         Entity *entity = &manager->entities[i];  // Use pointer instead of copy
-        DrawTextureEx(*entity->sprite, entity->position, entity->rotation,
-            entity->scale, RAYWHITE);
+        
         
         if (entity->entityType == LIZARD)
         {
@@ -147,37 +148,33 @@ void drawEntities(EntityManager *manager)
 
 void drawLizard(const Entity *entity)
 {
-    DrawRectangleLinesEx(entity->hitbox.rect, 2, BLUE);
+    DrawTextureEx(*entity->sprite, entity->position, entity->rotation,
+            entity->scale, RAYWHITE);
+    if (DEBUG_MODE)
+    {
+        DrawRectangleLinesEx(entity->hitbox.rect, 2, BLUE);
+    }
 }
 
 void drawSawblade(const Entity *entity)
 {
-    DrawCircleLinesV(entity->hitbox.circle.center, entity->hitbox.circle.radius, GREEN);
-}
+    Vector2 origin = { entity->sprite->width * SAW_SCALE / 2.0f,
+                        entity->sprite->height * SAW_SCALE / 2.0f };
+    Rectangle source = { 0, 0, entity->sprite->width, entity->sprite->width };
 
-// void drawSaw(Sawblade sawblade)
-// {
-//   // Calculate the center of the texture for rotation
-//   Vector2 origin = { sawblade.sprite.width * 0.1f / 2.0f, sawblade.sprite.height * 0.1f / 2.0f };
-  
-//   // Source rectangle (entire texture)
-//   Rectangle source = { 0, 0, sawblade.sprite.width, sawblade.sprite.height };
-  
-//   // Destination rectangle (position and scaled size)
-//   Rectangle dest = { 
-//     sawblade.position.x + origin.x, 
-//     sawblade.position.y + origin.y, 
-//     sawblade.sprite.width * 0.1f, 
-//     sawblade.sprite.height * 0.1f 
-//   };
-  
-//   DrawTexturePro(sawblade.sprite, source, dest, origin, sawblade.rotation, RAYWHITE);
-  
-//   if (DEBUG_MODE)
-//   {
-//     DrawCircleLinesV(sawblade.hitbox.center, sawblade.hitbox.radius, PINK);
-//   }
-// }
+    Rectangle dest = { 
+        entity->position.x + origin.x,
+        entity->position.y + origin.y,
+        entity->sprite->width * SAW_SCALE,
+        entity->sprite->height * SAW_SCALE
+    };
+
+    DrawTexturePro(*entity->sprite, source, dest, origin, entity->rotation, RAYWHITE);
+    if (DEBUG_MODE)
+    {
+        DrawCircleLinesV(entity->hitbox.circle.center, entity->hitbox.circle.radius, GREEN);
+    }
+}
 
 void removeEntity(EntityManager *manager, int index)
 {
