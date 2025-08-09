@@ -1,6 +1,5 @@
 #include "player.h"
 #include "definitions.h"
-#include <stdio.h>
 
 void resizeHitboxes(Player *player);
 // Static variables for animation frame calculations

@@ -1,11 +1,17 @@
 #pragma once
 #include <raylib.h>
 
+#define DEBUG_MODE true
+
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
 
-#define PLAYER_SPAWN_LOCATION (Vector2){50, 50}
+#define MAIN_MENU_BUTTON_WIDTH 300
+#define MAIN_MENU_BUTTON_HEIGHT 80
+#define MAIN_MENU_BUTTON_FONT_SIZE 42
+#define MAIN_MENU_BUTTON_PADDING 20
 
+#define PLAYER_SPAWN_LOCATION (Vector2){50, 50}
 #define PLAYER_SPEED 620.0f
 #define PLAYER_SPRITE_WIDTH 210
 #define PLAYER_SPRITE_HEIGHT 190
@@ -32,7 +38,6 @@
 #define SAW_SPEED 600.0f
 #define OBJECT_SPAWN_RATE_MIN 0.65f // Minimum spawn time in seconds
 #define OBJECT_SPAWN_RATE_MAX 1.7f // Maximum spawn time in seconds
-#define DEBUG_MODE true
 #define MAX_ENTITIES 100
 #define ENTITY_SPAWN_HEIGHT_OFFSET 100
 #define SAW_SCALE 0.08f
@@ -42,4 +47,4 @@
 #define LIZARD_HITBOX_X 80
 #define LIZARD_HITBOX_Y 60
 #define LIZARD_HITBOX_OFFSET 0
-#define SAW_ROTATION_SPEED 300.0f
+#define SAW_ROTATION_SPEED 600.0f

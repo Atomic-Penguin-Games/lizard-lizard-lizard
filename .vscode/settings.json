@@ -2,6 +2,7 @@
     "C_Cpp.default.configurationProvider": "KylinIdeTeam.kylin-cmake-tools",
     "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json",
     "files.associations": {
-      "time.h": "c"
+      "time.h": "c",
+      "definitions.h": "c"
     }
   }
