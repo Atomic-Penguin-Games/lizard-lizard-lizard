@@ -11,6 +11,7 @@
 
 int main(void)
 {
+    bool pauseMode = false;
     // Virtual resolution (fixed game coordinates)
     const int virtualScreenWidth = SCREEN_WIDTH;
     const int virtualScreenHeight = SCREEN_HEIGHT;
@@ -29,7 +30,7 @@ int main(void)
 
     // Create render texture for virtual resolution
     RenderTexture2D target = LoadRenderTexture(virtualScreenWidth, virtualScreenHeight);
-    SetTextureFilter(target.texture, TEXTURE_FILTER_POINT);
+    SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR);
 
     initSoundSystem();
     initRandomizer();
@@ -51,25 +52,30 @@ int main(void)
       // Calculate scale to fit virtual resolution to window
       float scale = fminf((float)currentWindowWidth/virtualScreenWidth, (float)currentWindowHeight/virtualScreenHeight);
       
-      Vector2 velocity = getPlayerInput();
-      updatePlayer(&player, velocity, dT, virtualScreenWidth, virtualScreenHeight);
-      updateManager(&manager, &gm, dT, virtualScreenWidth, virtualScreenHeight);
-      updateEntities(&manager, dT, virtualScreenWidth);
-      CollisionType collisionType = checkForCollisions(&manager, player.hitboxes);
-      
-      switch(collisionType)
+      if (IsKeyPressed(KEY_SPACE)) pauseMode = !pauseMode;
+
+      if (pauseMode == false)
       {
-        case SCORE_COLLISION:
-          score++;
-          playScoreSound();
-          playAnimation(&player);
-          break;
-        case DEATH_COLLISION:
-          //TODO Death
-          break;
-        default:
-          break;
-      };
+        Vector2 velocity = getPlayerInput();
+        updatePlayer(&player, velocity, dT, virtualScreenWidth, virtualScreenHeight);
+        updateManager(&manager, &gm, dT, virtualScreenWidth, virtualScreenHeight);
+        updateEntities(&manager, dT, virtualScreenWidth);
+        CollisionType collisionType = checkForCollisions(&manager, player.hitboxes);
+      
+        switch(collisionType)
+        {
+          case SCORE_COLLISION:
+            score++;
+            playScoreSound();
+            playAnimation(&player);
+            break;
+          case DEATH_COLLISION:
+            //TODO Death
+            break;
+          default:
+            break;
+        };
+      }
       
       // Draw everything to the virtual resolution render texture
       BeginTextureMode(target);

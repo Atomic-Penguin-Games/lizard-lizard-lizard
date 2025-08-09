@@ -152,7 +152,7 @@ void drawLizard(const Entity *entity)
 
 void drawSawblade(const Entity *entity)
 {
-
+    DrawCircleLinesV(entity->hitbox.circle.center, entity->hitbox.circle.radius, GREEN);
 }
 
 // void drawSaw(Sawblade sawblade)

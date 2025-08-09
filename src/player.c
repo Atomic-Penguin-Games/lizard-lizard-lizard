@@ -2,6 +2,7 @@
 #include "definitions.h"
 #include <stdio.h>
 
+void resizeHitboxes(Player *player);
 // Static variables for animation frame calculations
 static int frameWidth = 0;
 static int frameHeight = 0;
@@ -122,7 +123,7 @@ void drawPlayer(Player *player)
         DrawRectangleLinesEx(player->hitbox, 2, BLUE);
         DrawRectangleLinesEx(player->headbox, 2, GREEN);
         DrawRectangleLinesEx(player->tailbox, 2, PINK);
-        DrawRectangleLinesEx(player->lowerTailbox, 2, BLACK);
+        DrawRectangleLinesEx(player->lowerTailbox, 2, GREEN);
     }
 }
 
@@ -176,7 +177,7 @@ int screenWidth, int screenHeight)
             }
         }
     }
-
+    //resizeHitboxes(player);
     updateHitboxes(player);
 }
 
@@ -227,31 +228,32 @@ void playAnimation(Player *player)
 
 //used to resize hitboxes to figure out the values to set in definitions.
 //updateHitboxes() needs to be disabled or it overwrites whatever is modified here.
-// void resizeHitboxes()
+// void resizeHitboxes(Player *player)
 // {
-//     if (IsKeyPressed(KEY_W)) player->lowerTailbox.y -= 5;
-//     if (IsKeyPressed(KEY_S)) player->lowerTailbox.y += 5;
-//     if (IsKeyPressed(KEY_A)) player->lowerTailbox.x -= 5;
-//     if (IsKeyPressed(KEY_D)) player->lowerTailbox.x += 5;
+//     Rectangle rect = player->hitbox;
+//     if (IsKeyPressed(KEY_T)) rect.y -= 5;
+//     if (IsKeyPressed(KEY_G)) rect.y += 5;
+//     if (IsKeyPressed(KEY_F)) rect.x -= 5;
+//     if (IsKeyPressed(KEY_H)) rect.x += 5;
 
-//     if (IsKeyPressed(KEY_I)) player->lowerTailbox.height += 5;
-//     if (IsKeyPressed(KEY_K)) player->lowerTailbox.height -= 5;
-//     if (IsKeyPressed(KEY_J)) player->lowerTailbox.width -= 5;
-//     if (IsKeyPressed(KEY_L)) player->lowerTailbox.width += 5;
-//     // Print lowerTailbox data when P is pressed
+//     if (IsKeyPressed(KEY_I)) rect.height += 5;
+//     if (IsKeyPressed(KEY_K)) rect.height -= 5;
+//     if (IsKeyPressed(KEY_J)) rect.width -= 5;
+//     if (IsKeyPressed(KEY_L)) rect.width += 5;
+//     // Print rect data when P is pressed
 //     if (IsKeyPressed(KEY_P))
 //     {
-//         printf("Player lowerTailbox Data:\n");
+//         printf("Player rect Data:\n");
 //         printf("  Position: (%.2f, %.2f)\n", player->position.x, player->position.y);
-//         printf("  lowerTailbox: x=%.2f, y=%.2f, w=%.2f, h=%.2f\n", 
-//                player->lowerTailbox.x, player->lowerTailbox.y, player->lowerTailbox.width, player->lowerTailbox.height);
-//         // printf("  lowerTailbox: x=%.2f, y=%.2f, w=%.2f, h=%.2f\n", 
-//         //        player->lowerTailbox.x, player->lowerTailbox.y, player->lowerTailbox.width, player->lowerTailbox.height);
-//         // printf("  lowerTailbox: x=%.2f, y=%.2f, w=%.2f, h=%.2f\n", 
-//         //        player->lowerTailbox.x, player->lowerTailbox.y, player->lowerTailbox.width, player->lowerTailbox.height);
-//         // printf("  Animation: frame=%d, animating=%s\n", 
-//         //        player->currentFrame, player->isAnimating ? "true" : "false");
+//         printf("  rect: x=%.2f, y=%.2f, w=%.2f, h=%.2f\n", 
+//                rect.x, rect.y, rect.width, rect.height);
+//         printf("  rect: x=%.2f, y=%.2f, w=%.2f, h=%.2f\n", 
+//                rect.x, rect.y, rect.width, rect.height);
+//         printf("  rect: x=%.2f, y=%.2f, w=%.2f, h=%.2f\n", 
+//                rect.x, rect.y, rect.width, rect.height);
+//         printf("  Animation: frame=%d, animating=%s\n", 
+//                player->currentFrame, player->isAnimating ? "true" : "false");
 //         printf("---\n");
 //     }
-
+//     player->hitbox = rect;
 // }
