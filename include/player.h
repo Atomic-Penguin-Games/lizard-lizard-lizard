@@ -3,8 +3,7 @@
 #include "definitions.h"
 #include "soundManager.h"
 
-typedef struct Player
-{
+typedef struct Player {
   Vector2 position;
   Vector2 velocity;
   Rectangle hitbox;

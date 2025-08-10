@@ -118,8 +118,10 @@ CollisionType checkForCollisions(EntityManager *manager, Rectangle* playerHitbox
         {
             for (int j = 0; j < PLAYER_HITBOX_COUNT; j++)
             {
+                // Print player hitbox rect data for debugging
+                printf("Player hitbox[%d]: x=%.2f, y=%.2f, w=%.2f, h=%.2f\n", j, playerHitboxes[j]->x, playerHitboxes[j]->y, playerHitboxes[j]->width, playerHitboxes[j]->height);
                 if (CheckCollisionRecs(manager->entities[i].hitbox.rect,
-                *playerHitboxes[j]))
+                    *playerHitboxes[j]))
                 {
                     removeEntity(manager, i);
                     return SCORE_COLLISION;

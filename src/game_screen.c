@@ -10,7 +10,6 @@ GameScreen gameScreenInit(GraphicsManager *gm, SoundManager *sm)
 {
     EntityManager entityManager = initEntityManager();
     Player player = createPlayer(&gm->playerSpritesheet);
-    initHitboxPointers(&player);
     RenderTexture2D target = LoadRenderTexture(VIRTUAL_SCREEN_WIDTH, VIRTUAL_SCREEN_HEIGHT);
     SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR);
     GameScreen gameScreen = {
@@ -21,6 +20,7 @@ GameScreen gameScreenInit(GraphicsManager *gm, SoundManager *sm)
         .target = target,
         .score = 0
     };
+    initHitboxPointers(&gameScreen.player);
     return gameScreen;
 }
 
