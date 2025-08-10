@@ -1,5 +1,10 @@
 #include "screens.h"
 
+typedef struct GameScreen {
+    EntityManager entityManager;
+    Player player;
+} GameScreen;
+
 void gameScreenInit()
 {
 

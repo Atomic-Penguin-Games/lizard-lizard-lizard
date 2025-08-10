@@ -1,18 +1,5 @@
-# Raylib-clang-template
+# Lizard Meme Game
 
 ##
-This is simply a preconfigured Cmake project setup to build raylib games written in C/C++ with Clang.
+[![Tech Stack](https://skillicons.dev/icons?i=c,cmake,git,gitlab,github,vscode,js,html,css,wasm)](https://skillicons.dev)
 
-The script expects your raylib libraries to be in a folder in the same directory your project is in, with a lib and include folder.
-
-- Dev/
-  - raylib/
-    - include/
-    - lib/
-  - myGameProject/
-    - CMakeLists.txt
-    - configure_cmake.sh
-    - src/
-
-## Usage
-run `./configure_cmake.sh 'GameName'

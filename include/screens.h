@@ -9,6 +9,8 @@ typedef enum {
     SCREEN_QUIT = 4  // Special state to signal application quit
 } ScreenID;
 
+typedef struct GameScreen;
+
 void splashScreenInit();
 ScreenID splashScreenUpdate(float dt);
 void splashScreenDraw();
