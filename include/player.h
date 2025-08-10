@@ -1,6 +1,7 @@
 #pragma once
 #include <raylib.h>
 #include "definitions.h"
+#include "soundManager.h"
 
 typedef struct Player
 {
@@ -29,7 +30,6 @@ typedef struct Player
 Player createPlayer(Texture *sprite);
 void initHitboxPointers(Player *player);
 void drawPlayer(Player *player);
-void updatePlayer(Player *player, Vector2 velocity, float deltaTime,
-    int screenWidth, int screenHeight);
+void updatePlayer(Player *player, Vector2 velocity, float deltaTime);
 void updateHitboxes(Player *player);
 void playAnimation(Player *player);

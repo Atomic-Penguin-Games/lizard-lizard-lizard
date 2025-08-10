@@ -3,7 +3,7 @@
 #include "randomizer.h"
 #include <stdio.h>
 
-EntityManager initManager()
+EntityManager initEntityManager()
 {
     EntityManager manager = {
       .entities = {},
@@ -14,8 +14,7 @@ EntityManager initManager()
     return manager;
 }
 
-void updateManager(EntityManager *manager, GraphicsManager *gm, float deltaTime,
-    int screenWidth, int screenHeight)
+void updateManager(EntityManager *manager, GraphicsManager *gm, float deltaTime)
 {
     manager->spawnTimer += deltaTime;
     if (manager->spawnTimer >= manager->nextSpawnTime)
@@ -23,11 +22,13 @@ void updateManager(EntityManager *manager, GraphicsManager *gm, float deltaTime,
         // Randomly choose between spawning an iguana or sawblade (50/50 chance)
         if (randomNum(2) == 1)
         {
-          spawnEntity(manager, LIZARD, &gm->lizardSprite, screenWidth, screenHeight);
+          spawnEntity(manager, LIZARD, &gm->lizardSprite, 
+            VIRTUAL_SCREEN_WIDTH, VIRTUAL_SCREEN_HEIGHT);
         }
         else
         {
-          spawnEntity(manager, SAW, &gm->sawSprite, screenWidth, screenHeight);
+          spawnEntity(manager, SAW, &gm->sawSprite,
+            VIRTUAL_SCREEN_WIDTH, VIRTUAL_SCREEN_HEIGHT);
         }
         manager->spawnTimer = 0.0f;
         manager->nextSpawnTime = randomSpawnTime(); // Set new random spawn time
@@ -73,7 +74,7 @@ void spawnEntity(EntityManager *manager, EntityType type, Texture *sprite,
     }
 }
 
-void updateEntities(EntityManager *manager, float deltaTime, int screenwidth)
+void updateEntities(EntityManager *manager, float deltaTime)
 {
     for (int i = 0; i < manager->count; i++)
     {
@@ -90,7 +91,7 @@ void updateEntities(EntityManager *manager, float deltaTime, int screenwidth)
         }
         
         // Remove entities that have moved off-screen
-        if (entity->position.x + 100 < 0) // Assuming 100 is approximate entity width
+        if (entity->position.x + entity->hitbox.rect.width*2 < 0)
         {
             removeEntity(manager, i);
             i--; // Decrement i to check the same index again

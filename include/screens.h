@@ -1,5 +1,9 @@
 #pragma once
 #include <raylib.h>
+#include "entityManager.h"
+#include "inputManager.h"
+#include "soundManager.h"
+#include "player.h"
 
 typedef enum {
     SCREEN_SPLASH = 0,
@@ -9,7 +13,14 @@ typedef enum {
     SCREEN_QUIT = 4  // Special state to signal application quit
 } ScreenID;
 
-typedef struct GameScreen;
+typedef struct {
+    EntityManager entityManager;
+    GraphicsManager *graphicsManager;
+    SoundManager *soundManager;
+    Player player;
+    RenderTexture2D target;
+    int score;
+} GameScreen;
 
 void splashScreenInit();
 ScreenID splashScreenUpdate(float dt);
@@ -21,7 +32,7 @@ ScreenID mainMenuScreenUpdate(float dt);
 void mainMenuScreenDraw(int screenWidth, int screenHeight);
 void mainMenuScreenUnload();
 
-void gameScreenInit();
-ScreenID gameScreenUpdate(float dt);
-void gameScreenDraw();
+GameScreen gameScreenInit(GraphicsManager *gm, SoundManager *sm);
+ScreenID gameScreenUpdate(GameScreen *gameScreen, float dt);
+void gameScreenDraw(GameScreen *gameScreen, int screenWidth, int screenHeight);
 void gameScreenUnload();

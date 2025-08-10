@@ -56,13 +56,12 @@ typedef struct EntityManager
     float nextSpawnTime;
 } EntityManager;
 
-EntityManager initManager();
-void updateManager(EntityManager *manager, GraphicsManager *gm, float deltaTime,
-    int screenWidth, int screenHeight);
+EntityManager initEntityManager();
+void updateManager(EntityManager *manager, GraphicsManager *gm, float deltaTime);
 void spawnEntity(EntityManager *manager, EntityType type, Texture *sprite,
 int screenWidth, int screenHeight);
-void updateEntities(EntityManager *manager, float deltaTime, int screenwidth);
-CollisionType checkForCollisions(EntityManager *manager, Rectangle* playerHitboxes[]);
+void updateEntities(EntityManager *manager, float deltaTime);
+CollisionType checkForCollisions(EntityManager *manager, Rectangle *playerHitboxes[]);
 void drawEntities(EntityManager *manager);
 void removeEntity(EntityManager *manager, int index);
 void drawSawblade(const Entity *entity);

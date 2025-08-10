@@ -49,7 +49,6 @@ Player createPlayer(Texture *spriteSheet)
         .frameTime = 0.03f,  // 10 FPS animation
         .facingLeft = false  // Start facing right
     };
-    
     updateHitboxes(&player);
     
     return player;
@@ -126,8 +125,7 @@ void drawPlayer(Player *player)
     }
 }
 
-void updatePlayer(Player *player, Vector2 velocity, float deltaTime,
-int screenWidth, int screenHeight)
+void updatePlayer(Player *player, Vector2 velocity, float deltaTime)
 {
     // Update facing direction based on movement
     if (velocity.x < 0)
@@ -145,17 +143,17 @@ int screenWidth, int screenHeight)
     if (player->position.y < 0)
     {
         player->position.y = 0;
-    }else if (player->position.y > screenHeight - PLAYER_SPRITE_HEIGHT)
+    }else if (player->position.y > VIRTUAL_SCREEN_HEIGHT - PLAYER_SPRITE_HEIGHT)
     {
-        player->position.y = screenHeight - PLAYER_SPRITE_HEIGHT;
+        player->position.y = VIRTUAL_SCREEN_HEIGHT - PLAYER_SPRITE_HEIGHT;
     }
 
     if (player->position.x < 0)
     {
         player->position.x = 0;
-    } else if (player->position.x > screenWidth - PLAYER_SPRITE_WIDTH)
+    } else if (player->position.x > VIRTUAL_SCREEN_WIDTH - PLAYER_SPRITE_WIDTH)
     {
-        player->position.x = screenWidth - PLAYER_SPRITE_WIDTH;
+        player->position.x = VIRTUAL_SCREEN_WIDTH - PLAYER_SPRITE_WIDTH;
     }
     
     // Update animation
