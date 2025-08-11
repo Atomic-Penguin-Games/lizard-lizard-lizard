@@ -6,12 +6,13 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 project(Lizard_Meme)
 set(EXECUTABLE lizard_meme)
 
-# Platform detection
+# Platform detection and raylib configuration
 if (EMSCRIPTEN)
     set(PLATFORM "Web")
     set(RAYLIB_DIR ${PROJECT_SOURCE_DIR}/../raylib-web/)
     set(RAYLIB_INCLUDE_DIR ${RAYLIB_DIR}/src)
     set(RAYLIB_LIB_PATH ${RAYLIB_DIR}/src/libraylib.web.a)
+    set(USE_SYSTEM_RAYLIB FALSE)
 elseif(WIN32)
     set(PLATFORM "Windows")
     if(CMAKE_CROSSCOMPILING)
@@ -19,11 +20,13 @@ elseif(WIN32)
         set(RAYLIB_DIR ${PROJECT_SOURCE_DIR}/../raylib-mingw64)
         set(RAYLIB_INCLUDE_DIR ${RAYLIB_DIR}/include)
         set(RAYLIB_LIB_PATH ${RAYLIB_DIR}/lib/libraylib.a)
+        set(USE_SYSTEM_RAYLIB FALSE)
     else()
         # Native Windows build
         set(RAYLIB_DIR ${PROJECT_SOURCE_DIR}/../raylib-5.5)
         set(RAYLIB_INCLUDE_DIR ${RAYLIB_DIR}/include)
         set(RAYLIB_LIB_PATH ${RAYLIB_DIR}/lib/libraylib.a)
+        set(USE_SYSTEM_RAYLIB FALSE)
     endif()
 elseif(APPLE)
     set(PLATFORM "macOS")
@@ -32,26 +35,63 @@ elseif(APPLE)
         set(RAYLIB_DIR ${PROJECT_SOURCE_DIR}/../raylib-macos)
         set(RAYLIB_INCLUDE_DIR ${RAYLIB_DIR}/include)
         set(RAYLIB_LIB_PATH ${RAYLIB_DIR}/lib/libraylib.a)
+        set(USE_SYSTEM_RAYLIB FALSE)
     else()
-        # Native macOS build
-        set(RAYLIB_DIR ${PROJECT_SOURCE_DIR}/../raylib-5.5)
-        set(RAYLIB_INCLUDE_DIR ${RAYLIB_DIR}/include)
-        set(RAYLIB_LIB_PATH ${RAYLIB_DIR}/lib/libraylib.a)
+        # Try to find system-installed raylib first
+        find_package(PkgConfig QUIET)
+        if(PkgConfig_FOUND)
+            pkg_check_modules(RAYLIB QUIET raylib)
+        endif()
+        
+        if(RAYLIB_FOUND)
+            # Use system raylib
+            set(RAYLIB_INCLUDE_DIR ${RAYLIB_INCLUDE_DIRS})
+            set(RAYLIB_LIB_PATH ${RAYLIB_LIBRARIES})
+            set(USE_SYSTEM_RAYLIB TRUE)
+            message(STATUS "Using system-installed raylib")
+        else()
+            # Fall back to local raylib
+            set(RAYLIB_DIR ${PROJECT_SOURCE_DIR}/../raylib-5.5)
+            set(RAYLIB_INCLUDE_DIR ${RAYLIB_DIR}/include)
+            set(RAYLIB_LIB_PATH ${RAYLIB_DIR}/lib/libraylib.a)
+            set(USE_SYSTEM_RAYLIB FALSE)
+            message(STATUS "Using local raylib from ${RAYLIB_DIR}")
+        endif()
     endif()
 else()
     set(PLATFORM "Desktop")
-    set(RAYLIB_DIR ${PROJECT_SOURCE_DIR}/../raylib-5.5)
-    set(RAYLIB_INCLUDE_DIR ${RAYLIB_DIR}/include)
-    set(RAYLIB_LIB_PATH ${RAYLIB_DIR}/lib/libraylib.a)
+    # Try to find system-installed raylib first
+    find_package(PkgConfig QUIET)
+    if(PkgConfig_FOUND)
+        pkg_check_modules(RAYLIB QUIET raylib)
+    endif()
+    
+    if(RAYLIB_FOUND)
+        # Use system raylib
+        set(RAYLIB_INCLUDE_DIR ${RAYLIB_INCLUDE_DIRS})
+        set(RAYLIB_LIB_PATH ${RAYLIB_LIBRARIES})
+        set(USE_SYSTEM_RAYLIB TRUE)
+        message(STATUS "Using system-installed raylib")
+    else()
+        # Fall back to local raylib
+        set(RAYLIB_DIR ${PROJECT_SOURCE_DIR}/../raylib-5.5)
+        set(RAYLIB_INCLUDE_DIR ${RAYLIB_DIR}/include)
+        set(RAYLIB_LIB_PATH ${RAYLIB_DIR}/lib/libraylib.a)
+        set(USE_SYSTEM_RAYLIB FALSE)
+        message(STATUS "Using local raylib from ${RAYLIB_DIR}")
+    endif()
 endif()
 
 set(RES_DIR "${CMAKE_SOURCE_DIR}/res")
 set(RES_LINK "${CMAKE_BINARY_DIR}/res")
 
-include_directories(
-  ${PROJECT_SOURCE_DIR}/include/
-  ${RAYLIB_INCLUDE_DIR}
-)
+# Include directories
+include_directories(${PROJECT_SOURCE_DIR}/include/)
+
+# Add raylib include directories if not using system raylib
+if(NOT USE_SYSTEM_RAYLIB)
+    include_directories(${RAYLIB_INCLUDE_DIR})
+endif()
 
 file(GLOB all_SRCS
   "${PROJECT_SOURCE_DIR}/include/*.h"
@@ -90,12 +130,24 @@ elseif(APPLE)
         endif()
     else()
         # Native macOS build
-        target_link_libraries(${EXECUTABLE} PRIVATE 
-            ${RAYLIB_LIB_PATH}
-            "-framework OpenGL" 
-            "-framework Cocoa" 
-            "-framework IOKit" 
-            "-framework CoreVideo")
+        if(USE_SYSTEM_RAYLIB)
+            # System raylib with pkg-config
+            target_link_libraries(${EXECUTABLE} PRIVATE 
+                ${RAYLIB_LIB_PATH}
+                "-framework OpenGL" 
+                "-framework Cocoa" 
+                "-framework IOKit" 
+                "-framework CoreVideo")
+            target_include_directories(${EXECUTABLE} PRIVATE ${RAYLIB_INCLUDE_DIR})
+        else()
+            # Local raylib
+            target_link_libraries(${EXECUTABLE} PRIVATE 
+                ${RAYLIB_LIB_PATH}
+                "-framework OpenGL" 
+                "-framework Cocoa" 
+                "-framework IOKit" 
+                "-framework CoreVideo")
+        endif()
         
         # Create symlink for resources (native macOS)
         if(NOT EXISTS "${RES_LINK}")
@@ -131,9 +183,18 @@ elseif(WIN32)
     target_compile_features(${EXECUTABLE} PRIVATE cxx_std_23)
 else()
     # Desktop build settings (Linux only now)
-    target_link_libraries(${EXECUTABLE} PRIVATE 
-        ${RAYLIB_LIB_PATH} 
-        m pthread dl GL)
+    if(USE_SYSTEM_RAYLIB)
+        # System raylib with pkg-config
+        target_link_libraries(${EXECUTABLE} PRIVATE 
+            ${RAYLIB_LIB_PATH} 
+            m pthread dl GL)
+        target_include_directories(${EXECUTABLE} PRIVATE ${RAYLIB_INCLUDE_DIR})
+    else()
+        # Local raylib
+        target_link_libraries(${EXECUTABLE} PRIVATE 
+            ${RAYLIB_LIB_PATH} 
+            m pthread dl GL)
+    endif()
     target_compile_features(${EXECUTABLE} PRIVATE cxx_std_23)
     
     # Create symlink for resources (Linux)
