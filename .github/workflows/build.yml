@@ -43,16 +43,21 @@ jobs:
         cd ../..
         mkdir -p raylib-mingw64/{include,lib}
         
-        # Copy headers
-        cp -r raylib-source/src/raylib.h raylib-mingw64/include/
-        cp -r raylib-source/src/raymath.h raylib-mingw64/include/
-        cp -r raylib-source/src/rlgl.h raylib-mingw64/include/
+        # Copy headers (with more verbose output)
+        echo "Copying raylib headers..."
+        cp raylib-source/src/raylib.h raylib-mingw64/include/
+        cp raylib-source/src/raymath.h raylib-mingw64/include/
+        cp raylib-source/src/rlgl.h raylib-mingw64/include/
         
-        # Copy library
+        # Copy library (check if it exists first)
+        echo "Looking for raylib library..."
+        find raylib-source/build -name "*.a" -type f
         cp raylib-source/build/raylib/libraylib.a raylib-mingw64/lib/
         
         # Verify files exist
+        echo "Headers in raylib-mingw64/include/:"
         ls -la raylib-mingw64/include/
+        echo "Libraries in raylib-mingw64/lib/:"
         ls -la raylib-mingw64/lib/
     
     - name: Build game for Windows
@@ -170,25 +175,40 @@ jobs:
       with:
         usesh: true
         prepare: |
-          pkg install -y cmake git gmake pkgconf mesa-libs libX11 libXrandr libXi libXcursor libXinerama
+          pkg update
+          pkg install -y cmake git gmake pkgconf mesa-libs libX11 libXrandr libXi libXcursor libXinerama gcc
         run: |
-          # Install raylib from source
+          set -e  # Exit on any error
+          
+          echo "=== Installing raylib from source ==="
           git clone --depth 1 --branch 5.5 https://github.com/raysan5/raylib.git
           cd raylib
           mkdir build && cd build
+          
+          echo "=== Configuring raylib ==="
           cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF
+          
+          echo "=== Building raylib ==="
           gmake -j$(sysctl -n hw.ncpu)
+          
+          echo "=== Installing raylib ==="
           gmake install
           cd ../..
           
-          # Build game
+          echo "=== Building game ==="
           mkdir build && cd build
+          
+          echo "=== Configuring game ==="
           cmake .. -DCMAKE_BUILD_TYPE=Release
+          
+          echo "=== Compiling game ==="
           gmake -j$(sysctl -n hw.ncpu)
           
-          # Verify build
+          echo "=== Verifying build ==="
           ls -la lizard_meme
-          ldd lizard_meme || true
+          file lizard_meme
+          
+          echo "=== Build completed successfully ==="
     
     - name: Upload FreeBSD artifact
       uses: actions/upload-artifact@v4
@@ -200,37 +220,60 @@ jobs:
 
   # Release job - only runs on tags and uploads to GitHub releases
   release:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/v') && always()
     needs: [build-linux, build-windows, build-macos, build-freebsd]
     runs-on: ubuntu-latest
     steps:
     - name: Download all artifacts
       uses: actions/download-artifact@v4
+      continue-on-error: true
       
     - name: Create release packages
       run: |
-        # Create Linux package
         mkdir -p packages
-        cd lizard-meme-linux
-        zip -r ../packages/lizard-meme-linux.zip lizard_meme res/
-        cd ..
         
-        # Create Windows package  
-        cd lizard-meme-windows
-        zip -r ../packages/lizard-meme-windows.zip lizard_meme.exe res/
-        cd ..
+        # Create Linux package (if exists)
+        if [ -d "lizard-meme-linux" ]; then
+          echo "Creating Linux package..."
+          cd lizard-meme-linux
+          zip -r ../packages/lizard-meme-linux.zip lizard_meme res/
+          cd ..
+        else
+          echo "Linux build not found, skipping..."
+        fi
         
-        # Create macOS package
-        cd lizard-meme-macos
-        zip -r ../packages/lizard-meme-macos.zip LizardMeme.app
-        cd ..
+        # Create Windows package (if exists)
+        if [ -d "lizard-meme-windows" ]; then
+          echo "Creating Windows package..."
+          cd lizard-meme-windows
+          zip -r ../packages/lizard-meme-windows.zip lizard_meme.exe res/
+          cd ..
+        else
+          echo "Windows build not found, skipping..."
+        fi
         
-        # Create FreeBSD package
-        cd lizard-meme-freebsd
-        zip -r ../packages/lizard-meme-freebsd.zip lizard_meme res/
-        cd ..
+        # Create macOS package (if exists)
+        if [ -d "lizard-meme-macos" ]; then
+          echo "Creating macOS package..."
+          cd lizard-meme-macos
+          zip -r ../packages/lizard-meme-macos.zip LizardMeme.app
+          cd ..
+        else
+          echo "macOS build not found, skipping..."
+        fi
         
-        ls -la packages/
+        # Create FreeBSD package (if exists)
+        if [ -d "lizard-meme-freebsd" ]; then
+          echo "Creating FreeBSD package..."
+          cd lizard-meme-freebsd
+          zip -r ../packages/lizard-meme-freebsd.zip lizard_meme res/
+          cd ..
+        else
+          echo "FreeBSD build not found, skipping..."
+        fi
+        
+        echo "Available packages:"
+        ls -la packages/ || echo "No packages created"
     
     - name: Create Release
       uses: softprops/action-gh-release@v1
@@ -240,7 +283,10 @@ jobs:
         body: |
           ## 🦎 Lizard Meme Game ${{ github.ref_name }}
           
-          ### Downloads:
+          ### Available Downloads:
+          Check the assets below for available platform builds. Some builds may be missing if they failed during compilation.
+          
+          ### Platform Instructions:
           - **🐧 Linux**: `lizard-meme-linux.zip` - Extract and run `./lizard_meme`
           - **🪟 Windows**: `lizard-meme-windows.zip` - Extract and run `lizard_meme.exe`  
           - **🍎 macOS**: `lizard-meme-macos.zip` - Extract and drag `LizardMeme.app` to Applications
@@ -252,7 +298,7 @@ jobs:
           - **macOS**: macOS 10.15+ (Catalina or newer)
           - **FreeBSD**: FreeBSD 13+, X11, Mesa drivers
           
-          Built automatically with GitHub Actions.
+          Built automatically with GitHub Actions. Check the [Actions tab](../../actions) for build logs if a platform is missing.
         draft: false
         prerelease: false
       env:
