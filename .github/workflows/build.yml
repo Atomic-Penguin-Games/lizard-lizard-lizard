@@ -1,0 +1,179 @@
+name: Multi-Platform Build
+
+on:
+  # Only run on pushes to main branch with version tags
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  # Run on pull requests to main
+  pull_request:
+    branches: [ main ]
+  # Allow manual triggering
+  workflow_dispatch:
+  # Run on releases
+  release:
+    types: [published]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake libasound2-dev mesa-common-dev libx11-dev libxrandr-dev libxi-dev xorg-dev libgl1-mesa-dev libglu1-mesa-dev
+    
+    - name: Install raylib
+      run: |
+        git clone --depth 1 --branch 5.5 https://github.com/raysan5/raylib.git
+        cd raylib
+        mkdir build && cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF
+        make -j$(nproc)
+        sudo make install
+    
+    - name: Build game
+      run: |
+        mkdir build && cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release
+        make -j$(nproc)
+    
+    - name: Upload Linux artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: lizard-meme-linux
+        path: |
+          build/lizard_meme
+          res/
+
+  build-windows:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install MinGW
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y mingw-w64 cmake
+    
+    - name: Build raylib for Windows
+      run: |
+        git clone --depth 1 --branch 5.5 https://github.com/raysan5/raylib.git raylib-mingw64
+        cd raylib-mingw64
+        mkdir build && cd build
+        cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchain-mingw64.cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF
+        make -j$(nproc)
+        cd ..
+        mkdir -p ../raylib-mingw64/{include,lib}
+        cp -r src/*.h ../raylib-mingw64/include/
+        cp build/raylib/libraylib.a ../raylib-mingw64/lib/
+    
+    - name: Build game for Windows
+      run: |
+        mkdir build-windows && cd build-windows
+        cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchain-mingw64.cmake -DCMAKE_BUILD_TYPE=Release
+        make -j$(nproc)
+    
+    - name: Upload Windows artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: lizard-meme-windows
+        path: |
+          build-windows/lizard_meme.exe
+          res/
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install dependencies
+      run: |
+        brew install cmake
+    
+    - name: Install raylib
+      run: |
+        git clone --depth 1 --branch 5.5 https://github.com/raysan5/raylib.git
+        cd raylib
+        mkdir build && cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DCMAKE_OSX_DEPLOYMENT_TARGET=10.15
+        make -j$(sysctl -n hw.ncpu)
+        sudo make install
+    
+    - name: Build game
+      run: |
+        mkdir build && cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_DEPLOYMENT_TARGET=10.15
+        make -j$(sysctl -n hw.ncpu)
+    
+    - name: Create macOS app bundle
+      run: |
+        mkdir -p build/LizardMeme.app/Contents/{MacOS,Resources}
+        cp build/lizard_meme build/LizardMeme.app/Contents/MacOS/
+        cp -r res build/LizardMeme.app/Contents/Resources/
+        
+        # Create Info.plist
+        cat > build/LizardMeme.app/Contents/Info.plist << EOF
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+            <key>CFBundleExecutable</key>
+            <string>lizard_meme</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.yourname.lizardmeme</string>
+            <key>CFBundleName</key>
+            <string>Lizard Meme</string>
+            <key>CFBundleVersion</key>
+            <string>1.0</string>
+            <key>CFBundleShortVersionString</key>
+            <string>1.0</string>
+            <key>LSMinimumSystemVersion</key>
+            <string>10.15</string>
+        </dict>
+        </plist>
+        EOF
+    
+    - name: Upload macOS artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: lizard-meme-macos
+        path: build/LizardMeme.app
+
+  build-web:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install Emscripten
+      run: |
+        git clone https://github.com/emscripten-core/emsdk.git
+        cd emsdk
+        ./emsdk install latest
+        ./emsdk activate latest
+    
+    - name: Build raylib for Web
+      run: |
+        source emsdk/emsdk_env.sh
+        git clone --depth 1 --branch 5.5 https://github.com/raysan5/raylib.git raylib-web
+        cd raylib-web/src
+        emmake make PLATFORM=PLATFORM_WEB RAYLIB_LIBTYPE=STATIC -j$(nproc)
+    
+    - name: Build game for Web
+      run: |
+        source emsdk/emsdk_env.sh
+        mkdir build-web && cd build-web
+        emcmake cmake .. -DCMAKE_BUILD_TYPE=Release
+        emmake make -j$(nproc)
+    
+    - name: Upload Web artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: lizard-meme-web
+        path: |
+          build-web/lizard_meme.html
+          build-web/lizard_meme.js
+          build-web/lizard_meme.wasm
+          build-web/lizard_meme.data

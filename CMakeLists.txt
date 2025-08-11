@@ -25,6 +25,19 @@ elseif(WIN32)
         set(RAYLIB_INCLUDE_DIR ${RAYLIB_DIR}/include)
         set(RAYLIB_LIB_PATH ${RAYLIB_DIR}/lib/libraylib.a)
     endif()
+elseif(APPLE)
+    set(PLATFORM "macOS")
+    if(CMAKE_CROSSCOMPILING)
+        # Cross-compiling for macOS
+        set(RAYLIB_DIR ${PROJECT_SOURCE_DIR}/../raylib-macos)
+        set(RAYLIB_INCLUDE_DIR ${RAYLIB_DIR}/include)
+        set(RAYLIB_LIB_PATH ${RAYLIB_DIR}/lib/libraylib.a)
+    else()
+        # Native macOS build
+        set(RAYLIB_DIR ${PROJECT_SOURCE_DIR}/../raylib-5.5)
+        set(RAYLIB_INCLUDE_DIR ${RAYLIB_DIR}/include)
+        set(RAYLIB_LIB_PATH ${RAYLIB_DIR}/lib/libraylib.a)
+    endif()
 else()
     set(PLATFORM "Desktop")
     set(RAYLIB_DIR ${PROJECT_SOURCE_DIR}/../raylib-5.5)
@@ -60,6 +73,37 @@ if (EMSCRIPTEN)
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
     
     target_link_libraries(${EXECUTABLE} PRIVATE ${RAYLIB_LIB_PATH})
+elseif(APPLE)
+    # macOS build settings
+    if(CMAKE_CROSSCOMPILING)
+        # Cross-compiling for macOS with osxcross
+        target_link_libraries(${EXECUTABLE} PRIVATE 
+            ${RAYLIB_LIB_PATH}
+            "-framework OpenGL" 
+            "-framework Cocoa" 
+            "-framework IOKit" 
+            "-framework CoreVideo")
+        
+        # Copy resources to build directory for macOS
+        if(NOT EXISTS "${RES_LINK}")
+            execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory "${RES_DIR}" "${RES_LINK}")
+        endif()
+    else()
+        # Native macOS build
+        target_link_libraries(${EXECUTABLE} PRIVATE 
+            ${RAYLIB_LIB_PATH}
+            "-framework OpenGL" 
+            "-framework Cocoa" 
+            "-framework IOKit" 
+            "-framework CoreVideo")
+        
+        # Create symlink for resources (native macOS)
+        if(NOT EXISTS "${RES_LINK}")
+            execute_process(COMMAND ln -s "${RES_DIR}" "${RES_LINK}")
+        endif()
+    endif()
+    
+    target_compile_features(${EXECUTABLE} PRIVATE cxx_std_23)
 elseif(WIN32)
     # Windows build settings
     if(CMAKE_CROSSCOMPILING)
@@ -86,16 +130,14 @@ elseif(WIN32)
     
     target_compile_features(${EXECUTABLE} PRIVATE cxx_std_23)
 else()
-    # Desktop build settings (Linux/macOS)
+    # Desktop build settings (Linux only now)
     target_link_libraries(${EXECUTABLE} PRIVATE 
         ${RAYLIB_LIB_PATH} 
         m pthread dl GL)
     target_compile_features(${EXECUTABLE} PRIVATE cxx_std_23)
     
-    # Create symlink for resources (desktop only)
+    # Create symlink for resources (Linux)
     if(NOT EXISTS "${RES_LINK}")
-        if(UNIX OR APPLE)
-            execute_process(COMMAND ln -s "${RES_DIR}" "${RES_LINK}")
-        endif()
+        execute_process(COMMAND ln -s "${RES_DIR}" "${RES_LINK}")
     endif()
 endif()
