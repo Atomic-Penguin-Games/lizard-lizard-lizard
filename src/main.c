@@ -56,7 +56,6 @@ int main(void)
     while (!WindowShouldClose())
     {
       float dT = GetFrameTime(); //deltaTime
-      printf("%f\n", dT);
       
       // Get current window size for scaling calculations
       int currentWindowWidth = GetScreenWidth();
@@ -98,18 +97,27 @@ int main(void)
       
       // Handle screen transitions
       if (nextScreen != currentScreen) {
+          printf("Screen transition: %d -> %d\n", currentScreen, nextScreen);
+          
           switch (nextScreen) {
               case SCREEN_QUIT:
                   printf("Application quit requested\n");
                   goto exit_loop;  // Exit the main loop
+                  
               case SCREEN_MAIN_MENU:
                   // Reset game screen when returning to main menu
                   if (currentScreen == SCREEN_GAME && gameScreenInitialized) {
                       gameScreenInitialized = false;
-                      printf("Returning to main menu\n");
+                      printf("Returning to main menu - game screen reset\n");
                   }
                   currentScreen = nextScreen;
                   break;
+                  
+              case SCREEN_GAME:
+                  printf("Transitioning to game screen\n");
+                  currentScreen = nextScreen;
+                  break;
+                  
               default:
                   currentScreen = nextScreen;
                   break;

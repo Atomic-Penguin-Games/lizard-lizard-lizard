@@ -62,23 +62,23 @@ void gameScreenDraw(GameScreen *gameScreen, int currentScreenWidth, int currentS
         SCORE_FONT_SIZE, RAYWHITE);
     EndTextureMode();
 
-    BeginDrawing();
-        ClearBackground(BLACK);
-        // Calculate position to center the scaled virtual screen
-        float scale = fminf((float)currentScreenWidth/VIRTUAL_SCREEN_WIDTH,
-            (float)currentScreenHeight/VIRTUAL_SCREEN_HEIGHT);
+    // Clear background for this frame
+    ClearBackground(BLACK);
+    
+    // Calculate position to center the scaled virtual screen
+    float scale = fminf((float)currentScreenWidth/VIRTUAL_SCREEN_WIDTH,
+        (float)currentScreenHeight/VIRTUAL_SCREEN_HEIGHT);
 
-        int offsetX = (currentScreenWidth - (int)(VIRTUAL_SCREEN_WIDTH * scale)) / 2;
-        int offsetY = (currentScreenHeight - (int)(VIRTUAL_SCREEN_HEIGHT * scale)) / 2;
-        
-        // Draw the virtual screen scaled to fit the window
-        Rectangle source = { 0, 0, (float)gameScreen->target.texture.width, 
-            (float)gameScreen->target.texture.height * -1};
-        Rectangle dest = { offsetX, offsetY, VIRTUAL_SCREEN_WIDTH * scale, 
-            VIRTUAL_SCREEN_HEIGHT * scale };
-        
-        DrawTexturePro(gameScreen->target.texture, source, dest, (Vector2){0, 0}, 0.0f, WHITE);
-    EndDrawing();
+    int offsetX = (currentScreenWidth - (int)(VIRTUAL_SCREEN_WIDTH * scale)) / 2;
+    int offsetY = (currentScreenHeight - (int)(VIRTUAL_SCREEN_HEIGHT * scale)) / 2;
+    
+    // Draw the virtual screen scaled to fit the window
+    Rectangle source = { 0, 0, (float)gameScreen->target.texture.width, 
+        (float)gameScreen->target.texture.height * -1};
+    Rectangle dest = { offsetX, offsetY, VIRTUAL_SCREEN_WIDTH * scale, 
+        VIRTUAL_SCREEN_HEIGHT * scale };
+    
+    DrawTexturePro(gameScreen->target.texture, source, dest, (Vector2){0, 0}, 0.0f, WHITE);
 }
 void gameScreenUnload()
 {

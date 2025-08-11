@@ -12,6 +12,19 @@ if (EMSCRIPTEN)
     set(RAYLIB_DIR ${PROJECT_SOURCE_DIR}/../raylib-web/)
     set(RAYLIB_INCLUDE_DIR ${RAYLIB_DIR}/src)
     set(RAYLIB_LIB_PATH ${RAYLIB_DIR}/src/libraylib.web.a)
+elseif(WIN32)
+    set(PLATFORM "Windows")
+    if(CMAKE_CROSSCOMPILING)
+        # Cross-compiling for Windows
+        set(RAYLIB_DIR ${PROJECT_SOURCE_DIR}/../raylib-mingw64)
+        set(RAYLIB_INCLUDE_DIR ${RAYLIB_DIR}/include)
+        set(RAYLIB_LIB_PATH ${RAYLIB_DIR}/lib/libraylib.a)
+    else()
+        # Native Windows build
+        set(RAYLIB_DIR ${PROJECT_SOURCE_DIR}/../raylib-5.5)
+        set(RAYLIB_INCLUDE_DIR ${RAYLIB_DIR}/include)
+        set(RAYLIB_LIB_PATH ${RAYLIB_DIR}/lib/libraylib.a)
+    endif()
 else()
     set(PLATFORM "Desktop")
     set(RAYLIB_DIR ${PROJECT_SOURCE_DIR}/../raylib-5.5)
@@ -47,8 +60,33 @@ if (EMSCRIPTEN)
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
     
     target_link_libraries(${EXECUTABLE} PRIVATE ${RAYLIB_LIB_PATH})
+elseif(WIN32)
+    # Windows build settings
+    if(CMAKE_CROSSCOMPILING)
+        # Cross-compiling for Windows with mingw64
+        target_link_libraries(${EXECUTABLE} PRIVATE 
+            ${RAYLIB_LIB_PATH}
+            -lwinmm -lgdi32 -lopengl32)
+        
+        # Copy resources to build directory for Windows
+        if(NOT EXISTS "${RES_LINK}")
+            execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory "${RES_DIR}" "${RES_LINK}")
+        endif()
+    else()
+        # Native Windows build
+        target_link_libraries(${EXECUTABLE} PRIVATE 
+            ${RAYLIB_LIB_PATH}
+            winmm gdi32 opengl32)
+        
+        # Copy resources for native Windows build
+        if(NOT EXISTS "${RES_LINK}")
+            execute_process(COMMAND cmd /c "xcopy \"${RES_DIR}\" \"${RES_LINK}\" /E /I /Y")
+        endif()
+    endif()
+    
+    target_compile_features(${EXECUTABLE} PRIVATE cxx_std_23)
 else()
-    # Desktop build settings
+    # Desktop build settings (Linux/macOS)
     target_link_libraries(${EXECUTABLE} PRIVATE 
         ${RAYLIB_LIB_PATH} 
         m pthread dl GL)
@@ -58,8 +96,6 @@ else()
     if(NOT EXISTS "${RES_LINK}")
         if(UNIX OR APPLE)
             execute_process(COMMAND ln -s "${RES_DIR}" "${RES_LINK}")
-        elseif(WIN32)
-            execute_process(COMMAND cmd /c "mklink /D \"${RES_LINK}\" \"${RES_DIR}\"")
         endif()
     endif()
 endif()
