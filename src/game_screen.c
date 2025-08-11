@@ -25,6 +25,11 @@ GameScreen gameScreenInit(GraphicsManager *gm, SoundManager *sm)
 
 ScreenID gameScreenUpdate(GameScreen *gameScreen, float dt)
 {
+    // Check for escape key to return to main menu
+    if (IsKeyPressed(KEY_ESCAPE)) {
+        return SCREEN_MAIN_MENU;
+    }
+    
     Vector2 velocity = getPlayerInput();
     updatePlayer(&gameScreen->player, velocity, dt);
     updateManager(&gameScreen->entityManager, gameScreen->graphicsManager, dt);
@@ -39,6 +44,7 @@ ScreenID gameScreenUpdate(GameScreen *gameScreen, float dt)
             playAnimation(&gameScreen->player);
             break;
         case DEATH_COLLISION:
+            // Could return to main menu on death, or implement game over screen
             break;
         default:
             break;

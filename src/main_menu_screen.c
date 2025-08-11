@@ -13,17 +13,17 @@ void mainMenuScreenInit()
 }
 
 ScreenID mainMenuScreenUpdate(float dt)
-{
-    // Check for button presses from Draw function
+{   
+    // Check if buttons were pressed in the draw function
     if (playButtonPressed) {
-        playButtonPressed = false;  // Reset flag
-        printf("Play button pressed - switching to game\n");
+        playButtonPressed = false;  // Reset the flag
+        printf("Transitioning to game screen\n");
         return SCREEN_GAME;
     }
     
     if (exitButtonPressed) {
-        exitButtonPressed = false;  // Reset flag
-        printf("Exit button pressed - quitting application\n");
+        exitButtonPressed = false;  // Reset the flag
+        printf("Quitting application\n");
         return SCREEN_QUIT;
     }
     
@@ -32,8 +32,6 @@ ScreenID mainMenuScreenUpdate(float dt)
 
 void mainMenuScreenDraw(int screenWidth, int screenHeight)
 {
-    //ClearBackground(DARKBLUE);
-    
     // Draw title
     const char* title = "Lizard Meme Game";
     int titleWidth = MeasureText(title, 60);
