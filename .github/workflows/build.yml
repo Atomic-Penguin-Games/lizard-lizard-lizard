@@ -27,15 +27,33 @@ jobs:
     
     - name: Build raylib for Windows
       run: |
-        git clone --depth 1 --branch 5.5 https://github.com/raysan5/raylib.git raylib-mingw64
-        cd raylib-mingw64
+        git clone --depth 1 --branch 5.5 https://github.com/raysan5/raylib.git raylib-source
+        cd raylib-source
         mkdir build && cd build
-        cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchain-mingw64.cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF
+        
+        # Use our toolchain file, not raylib's
+        cmake .. \
+          -DCMAKE_TOOLCHAIN_FILE=../../cmake/toolchain-mingw64.cmake \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DBUILD_EXAMPLES=OFF \
+          -DBUILD_GAMES=OFF
         make -j$(nproc)
-        cd ..
-        mkdir -p ../raylib-mingw64/{include,lib}
-        cp -r src/*.h ../raylib-mingw64/include/
-        cp build/raylib/libraylib.a ../raylib-mingw64/lib/
+        
+        # Create proper directory structure
+        cd ../..
+        mkdir -p raylib-mingw64/{include,lib}
+        
+        # Copy headers
+        cp -r raylib-source/src/raylib.h raylib-mingw64/include/
+        cp -r raylib-source/src/raymath.h raylib-mingw64/include/
+        cp -r raylib-source/src/rlgl.h raylib-mingw64/include/
+        
+        # Copy library
+        cp raylib-source/build/raylib/libraylib.a raylib-mingw64/lib/
+        
+        # Verify files exist
+        ls -la raylib-mingw64/include/
+        ls -la raylib-mingw64/lib/
     
     - name: Build game for Windows
       run: |
@@ -108,3 +126,134 @@ jobs:
       with:
         name: lizard-meme-macos
         path: build/LizardMeme.app
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake pkg-config libasound2-dev mesa-common-dev libx11-dev libxrandr-dev libxi-dev xorg-dev libgl1-mesa-dev libglu1-mesa-dev
+    
+    - name: Install raylib
+      run: |
+        git clone --depth 1 --branch 5.5 https://github.com/raysan5/raylib.git
+        cd raylib
+        mkdir build && cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF
+        make -j$(nproc)
+        sudo make install
+    
+    - name: Build game
+      run: |
+        mkdir build && cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release
+        make -j$(nproc)
+    
+    - name: Upload Linux artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: lizard-meme-linux
+        path: |
+          build/lizard_meme
+          res/
+
+  build-freebsd:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Build on FreeBSD
+      uses: vmactions/freebsd-vm@v1
+      with:
+        usesh: true
+        prepare: |
+          pkg install -y cmake git gmake pkgconf mesa-libs libX11 libXrandr libXi libXcursor libXinerama
+        run: |
+          # Install raylib from source
+          git clone --depth 1 --branch 5.5 https://github.com/raysan5/raylib.git
+          cd raylib
+          mkdir build && cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF
+          gmake -j$(sysctl -n hw.ncpu)
+          gmake install
+          cd ../..
+          
+          # Build game
+          mkdir build && cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          gmake -j$(sysctl -n hw.ncpu)
+          
+          # Verify build
+          ls -la lizard_meme
+          ldd lizard_meme || true
+    
+    - name: Upload FreeBSD artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: lizard-meme-freebsd
+        path: |
+          build/lizard_meme
+          res/
+
+  # Release job - only runs on tags and uploads to GitHub releases
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build-linux, build-windows, build-macos, build-freebsd]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      
+    - name: Create release packages
+      run: |
+        # Create Linux package
+        mkdir -p packages
+        cd lizard-meme-linux
+        zip -r ../packages/lizard-meme-linux.zip lizard_meme res/
+        cd ..
+        
+        # Create Windows package  
+        cd lizard-meme-windows
+        zip -r ../packages/lizard-meme-windows.zip lizard_meme.exe res/
+        cd ..
+        
+        # Create macOS package
+        cd lizard-meme-macos
+        zip -r ../packages/lizard-meme-macos.zip LizardMeme.app
+        cd ..
+        
+        # Create FreeBSD package
+        cd lizard-meme-freebsd
+        zip -r ../packages/lizard-meme-freebsd.zip lizard_meme res/
+        cd ..
+        
+        ls -la packages/
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: packages/*
+        name: "Lizard Meme Game ${{ github.ref_name }}"
+        body: |
+          ## 🦎 Lizard Meme Game ${{ github.ref_name }}
+          
+          ### Downloads:
+          - **🐧 Linux**: `lizard-meme-linux.zip` - Extract and run `./lizard_meme`
+          - **🪟 Windows**: `lizard-meme-windows.zip` - Extract and run `lizard_meme.exe`  
+          - **🍎 macOS**: `lizard-meme-macos.zip` - Extract and drag `LizardMeme.app` to Applications
+          - **😈 FreeBSD**: `lizard-meme-freebsd.zip` - Extract and run `./lizard_meme`
+          
+          ### System Requirements:
+          - **Linux**: OpenGL support, ALSA/PulseAudio for sound, X11
+          - **Windows**: Windows 10+ (64-bit)
+          - **macOS**: macOS 10.15+ (Catalina or newer)
+          - **FreeBSD**: FreeBSD 13+, X11, Mesa drivers
+          
+          Built automatically with GitHub Actions.
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
