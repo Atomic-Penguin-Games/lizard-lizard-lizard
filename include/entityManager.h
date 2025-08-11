@@ -1,7 +1,8 @@
 #pragma once
-#include "graphicsManager.h"
-#include "raylib.h"
+#include <raylib.h>
 #include "definitions.h"
+#include "graphicsManager.h"
+#include "player.h"
 
 typedef enum
 {
@@ -61,7 +62,8 @@ void updateManager(EntityManager *manager, GraphicsManager *gm, float deltaTime)
 void spawnEntity(EntityManager *manager, EntityType type, Texture *sprite,
 int screenWidth, int screenHeight);
 void updateEntities(EntityManager *manager, float deltaTime);
-CollisionType checkForCollisions(EntityManager *manager, Rectangle *playerHitboxes[]);
+CollisionType checkForCollisions(EntityManager *manager, PlayerHitbox (*hitBoxes)[PLAYER_HITBOX_COUNT]);
+//CollisionType checkForCollisions(EntityManager *manager, PlayerHitbox *hitBoxes[]);
 void drawEntities(EntityManager *manager);
 void removeEntity(EntityManager *manager, int index);
 void drawSawblade(const Entity *entity);

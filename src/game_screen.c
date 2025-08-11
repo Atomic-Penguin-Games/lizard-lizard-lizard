@@ -20,7 +20,6 @@ GameScreen gameScreenInit(GraphicsManager *gm, SoundManager *sm)
         .target = target,
         .score = 0
     };
-    initHitboxPointers(&gameScreen.player);
     return gameScreen;
 }
 
@@ -31,7 +30,7 @@ ScreenID gameScreenUpdate(GameScreen *gameScreen, float dt)
     updateManager(&gameScreen->entityManager, gameScreen->graphicsManager, dt);
     updateEntities(&gameScreen->entityManager, dt);
     CollisionType collisionType = checkForCollisions(
-        &gameScreen->entityManager, gameScreen->player.hitboxes);
+        &gameScreen->entityManager, &gameScreen->player.hitBoxes);
     switch (collisionType)
     {
         case SCORE_COLLISION:

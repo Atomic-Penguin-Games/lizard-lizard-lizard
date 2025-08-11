@@ -99,7 +99,7 @@ void updateEntities(EntityManager *manager, float deltaTime)
     }
 }
 
-CollisionType checkForCollisions(EntityManager *manager, Rectangle* playerHitboxes[])
+CollisionType checkForCollisions(EntityManager *manager, PlayerHitbox (*hitBoxes)[PLAYER_HITBOX_COUNT])
 {   
     for (int i = 0; i < manager->count; i++)
     {
@@ -107,8 +107,10 @@ CollisionType checkForCollisions(EntityManager *manager, Rectangle* playerHitbox
         {
             for (int j = 0; j < PLAYER_HITBOX_COUNT; j++)
             {          
+                if (!(*hitBoxes)[j].enabled) continue;
+                
                 if (CheckCollisionCircleRec(manager->entities[i].hitbox.circle.center,
-                    manager->entities[i].hitbox.circle.radius, *playerHitboxes[j]))
+                    manager->entities[i].hitbox.circle.radius, (*hitBoxes)[j].rect))
                 {
                     removeEntity(manager, i);
                     return DEATH_COLLISION;
@@ -118,10 +120,10 @@ CollisionType checkForCollisions(EntityManager *manager, Rectangle* playerHitbox
         {
             for (int j = 0; j < PLAYER_HITBOX_COUNT; j++)
             {
-                // Print player hitbox rect data for debugging
-                printf("Player hitbox[%d]: x=%.2f, y=%.2f, w=%.2f, h=%.2f\n", j, playerHitboxes[j]->x, playerHitboxes[j]->y, playerHitboxes[j]->width, playerHitboxes[j]->height);
+                if (!(*hitBoxes)[j].enabled) continue;
+                
                 if (CheckCollisionRecs(manager->entities[i].hitbox.rect,
-                    *playerHitboxes[j]))
+                    (*hitBoxes)[j].rect))
                 {
                     removeEntity(manager, i);
                     return SCORE_COLLISION;
@@ -175,7 +177,7 @@ void drawSawblade(const Entity *entity)
     DrawTexturePro(*entity->sprite, source, dest, origin, entity->rotation, RAYWHITE);
     if (DEBUG_MODE)
     {
-        DrawCircleLinesV(entity->hitbox.circle.center, entity->hitbox.circle.radius, GREEN);
+        DrawCircleV(entity->hitbox.circle.center, entity->hitbox.circle.radius, MAGENTA);
     }
 }
 

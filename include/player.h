@@ -3,18 +3,25 @@
 #include "definitions.h"
 #include "soundManager.h"
 
+typedef enum {
+  HITBOX_HEAD = 0,
+  HITBOX_BODY = 1,
+  HITBOX_TAIL = 2,
+  HITBOX_LOWER_TAIL = 3
+} HitboxType;
+
+typedef struct {
+  Rectangle rect;
+  float xOffset;
+  float yOffset;
+  bool enabled;
+} PlayerHitbox;
+
 typedef struct Player {
   Vector2 position;
   Vector2 velocity;
-  Rectangle hitbox;
-  Rectangle headbox;
-  Rectangle tailbox;
-  Rectangle lowerTailbox;
+  PlayerHitbox hitBoxes[PLAYER_HITBOX_COUNT];
   Texture *spriteSheet;  // Use pointer instead of copy
-  Vector2 hitboxOffset;
-  
-  // Array of pointers to all hitboxes for easy collision checking
-  Rectangle *hitboxes[PLAYER_HITBOX_COUNT];
   
   // Animation fields
   bool isAnimating;
