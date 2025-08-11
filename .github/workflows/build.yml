@@ -15,39 +15,6 @@ on:
     types: [published]
 
 jobs:
-  build-linux:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential cmake libasound2-dev mesa-common-dev libx11-dev libxrandr-dev libxi-dev xorg-dev libgl1-mesa-dev libglu1-mesa-dev
-    
-    - name: Install raylib
-      run: |
-        git clone --depth 1 --branch 5.5 https://github.com/raysan5/raylib.git
-        cd raylib
-        mkdir build && cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF
-        make -j$(nproc)
-        sudo make install
-    
-    - name: Build game
-      run: |
-        mkdir build && cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Release
-        make -j$(nproc)
-    
-    - name: Upload Linux artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: lizard-meme-linux
-        path: |
-          build/lizard_meme
-          res/
-
   build-windows:
     runs-on: ubuntu-latest
     steps:
@@ -141,39 +108,3 @@ jobs:
       with:
         name: lizard-meme-macos
         path: build/LizardMeme.app
-
-  build-web:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Install Emscripten
-      run: |
-        git clone https://github.com/emscripten-core/emsdk.git
-        cd emsdk
-        ./emsdk install latest
-        ./emsdk activate latest
-    
-    - name: Build raylib for Web
-      run: |
-        source emsdk/emsdk_env.sh
-        git clone --depth 1 --branch 5.5 https://github.com/raysan5/raylib.git raylib-web
-        cd raylib-web/src
-        emmake make PLATFORM=PLATFORM_WEB RAYLIB_LIBTYPE=STATIC -j$(nproc)
-    
-    - name: Build game for Web
-      run: |
-        source emsdk/emsdk_env.sh
-        mkdir build-web && cd build-web
-        emcmake cmake .. -DCMAKE_BUILD_TYPE=Release
-        emmake make -j$(nproc)
-    
-    - name: Upload Web artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: lizard-meme-web
-        path: |
-          build-web/lizard_meme.html
-          build-web/lizard_meme.js
-          build-web/lizard_meme.wasm
-          build-web/lizard_meme.data
