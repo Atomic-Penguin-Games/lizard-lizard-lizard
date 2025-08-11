@@ -1,0 +1,67 @@
+name: MacOS Build
+
+on:
+  # Only run on pushes to main branch with version tags
+  push:
+    tags: [ 'v*' ]
+  # Allow manual triggering
+  workflow_dispatch:
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install dependencies
+      run: |
+        brew install cmake
+    
+    - name: Install raylib
+      run: |
+        git clone --depth 1 --branch 5.5 https://github.com/raysan5/raylib.git
+        cd raylib
+        mkdir build && cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=OFF -DCMAKE_OSX_DEPLOYMENT_TARGET=10.15
+        make -j$(sysctl -n hw.ncpu)
+        sudo make install
+    
+    - name: Build game
+      run: |
+        mkdir build && cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_DEPLOYMENT_TARGET=10.15
+        make -j$(sysctl -n hw.ncpu)
+    
+    - name: Create macOS app bundle
+      run: |
+        mkdir -p build/LizardMeme.app/Contents/{MacOS,Resources}
+        cp build/lizard_meme build/LizardMeme.app/Contents/MacOS/
+        cp -r res build/LizardMeme.app/Contents/Resources/
+        
+        # Create Info.plist
+        cat > build/LizardMeme.app/Contents/Info.plist << EOF
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+            <key>CFBundleExecutable</key>
+            <string>lizard_meme</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.yourname.lizardmeme</string>
+            <key>CFBundleName</key>
+            <string>Lizard Meme</string>
+            <key>CFBundleVersion</key>
+            <string>1.0</string>
+            <key>CFBundleShortVersionString</key>
+            <string>1.0</string>
+            <key>LSMinimumSystemVersion</key>
+            <string>10.15</string>
+        </dict>
+        </plist>
+        EOF
+    
+    - name: Upload macOS artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: lizard-meme-macos
+        path: build/LizardMeme.app
