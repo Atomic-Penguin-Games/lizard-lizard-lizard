@@ -12,10 +12,13 @@
 #include "graphicsManager.h"
 #include "screens.h"
 
+void unloadGame();
+
 int main(void)
 {
     
     bool pauseMode = false;
+    bool isRunning = true;
     // Virtual resolution (fixed game coordinates)
     const int virtualScreenWidth = SCREEN_WIDTH;
     const int virtualScreenHeight = SCREEN_HEIGHT;
@@ -53,7 +56,7 @@ int main(void)
     
 
 
-    while (!WindowShouldClose())
+    while (!WindowShouldClose() && isRunning)
     {
       float dT = GetFrameTime(); //deltaTime
       
@@ -102,7 +105,9 @@ int main(void)
           switch (nextScreen) {
               case SCREEN_QUIT:
                   printf("Application quit requested\n");
-                  goto exit_loop;  // Exit the main loop
+                  isRunning = false;
+                  unloadGame();
+                  break;
                   
               case SCREEN_MAIN_MENU:
                   // Reset game screen when returning to main menu
@@ -124,9 +129,12 @@ int main(void)
           }
       }
     }
-    
-    exit_loop:
 
     CloseWindow();
     return 0;
+}
+
+void unloadGame()
+{
+    
 }
