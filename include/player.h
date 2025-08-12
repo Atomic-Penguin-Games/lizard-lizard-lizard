@@ -39,3 +39,4 @@ void drawPlayer(Player *player);
 void updatePlayer(Player *player, Vector2 velocity, float deltaTime);
 void updateHitboxes(Player *player);
 void playAnimation(Player *player);
+void resetPlayer(Player *player);  // Reset player to spawn position

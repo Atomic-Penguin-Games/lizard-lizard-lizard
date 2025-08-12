@@ -213,3 +213,23 @@ void playAnimation(Player *player)
     player->currentFrame = 0;
     player->animationTimer = 0.0f;
 }
+
+void resetPlayer(Player *player)
+{
+    // Reset position to spawn location
+    player->position = PLAYER_SPAWN_LOCATION;
+    
+    // Reset velocity
+    player->velocity = (Vector2){0, 0};
+    
+    // Reset animation state
+    player->isAnimating = false;
+    player->currentFrame = 0;
+    player->animationTimer = 0.0f;
+    
+    // Reset facing direction
+    player->facingLeft = false;
+    
+    // Update hitboxes to new position
+    updateHitboxes(player);
+}

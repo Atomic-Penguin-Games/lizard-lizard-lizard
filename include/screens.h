@@ -13,6 +13,11 @@ typedef enum {
     SCREEN_QUIT = 4  // Special state to signal application quit
 } ScreenID;
 
+typedef enum {
+    GAME_STATE_PLAYING = 0,
+    GAME_STATE_DEATH_OVERLAY = 1
+} GameState;
+
 typedef struct {
     EntityManager entityManager;
     GraphicsManager *graphicsManager;
@@ -20,6 +25,7 @@ typedef struct {
     Player player;
     RenderTexture2D target;
     int score;
+    GameState state;  // Track if playing or showing death overlay
 } GameScreen;
 
 void splashScreenInit();
@@ -35,4 +41,5 @@ void mainMenuScreenUnload();
 GameScreen gameScreenInit(GraphicsManager *gm, SoundManager *sm);
 ScreenID gameScreenUpdate(GameScreen *gameScreen, float dt);
 void gameScreenDraw(GameScreen *gameScreen, int screenWidth, int screenHeight);
+void gameScreenReset(GameScreen *gameScreen);  // Reset game state for replay
 void gameScreenUnload();

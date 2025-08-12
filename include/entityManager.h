@@ -68,3 +68,4 @@ void drawEntities(EntityManager *manager);
 void removeEntity(EntityManager *manager, int index);
 void drawSawblade(const Entity *entity);
 void drawLizard(const Entity *entity);
+void clearAllEntities(EntityManager *manager);  // Clear all entities for reset

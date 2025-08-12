@@ -193,3 +193,13 @@ void removeEntity(EntityManager *manager, int index)
         manager->count--;
     }
 }
+
+void clearAllEntities(EntityManager *manager)
+{
+    // Simply reset the count to 0, effectively clearing all entities
+    manager->count = 0;
+    
+    // Reset spawn timer to start fresh
+    manager->spawnTimer = 0.0f;
+    manager->nextSpawnTime = OBJECT_SPAWN_RATE_MIN;
+}
