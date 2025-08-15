@@ -51,6 +51,8 @@ void mainMenuScreenDraw(int screenWidth, int screenHeight)
     };
 
     GuiSetStyle(DEFAULT, TEXT_SIZE, MAIN_MENU_BUTTON_FONT_SIZE);
+    
+    // Try raygui buttons first
     if (GuiButton(playButton, "#131#Play")) {
         playButtonPressed = true;
         printf("Play button clicked in Draw\n");
@@ -58,6 +60,29 @@ void mainMenuScreenDraw(int screenWidth, int screenHeight)
     if (GuiButton(exitButton, "Quit")) {
         exitButtonPressed = true;
         printf("Exit button clicked in Draw\n");
+    }
+    
+    // Fallback: Manual mouse detection for web builds
+    Vector2 mousePos = GetMousePosition();
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        if (CheckCollisionPointRec(mousePos, playButton)) {
+            playButtonPressed = true;
+            printf("Play button clicked via mouse fallback\n");
+        }
+        if (CheckCollisionPointRec(mousePos, exitButton)) {
+            exitButtonPressed = true;
+            printf("Exit button clicked via mouse fallback\n");
+        }
+    }
+    
+    // Visual feedback for hover (since raygui might not work properly)
+    if (CheckCollisionPointRec(mousePos, playButton)) {
+        DrawRectangleLines(playButton.x - 2, playButton.y - 2, 
+                          playButton.width + 4, playButton.height + 4, YELLOW);
+    }
+    if (CheckCollisionPointRec(mousePos, exitButton)) {
+        DrawRectangleLines(exitButton.x - 2, exitButton.y - 2, 
+                          exitButton.width + 4, exitButton.height + 4, YELLOW);
     }
 }
 

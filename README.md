@@ -1,5 +1,6 @@
 # Lizard Meme Game
 
+## Tech Stack
 <p>
   <img src="raylib_icon.png" alt="Raylib Icon" width="128" />
 </p>
