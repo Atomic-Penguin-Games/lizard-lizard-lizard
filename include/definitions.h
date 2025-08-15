@@ -1,7 +1,10 @@
 #pragma once
 #include <raylib.h>
 
-#define DEBUG_MODE true
+#define DEBUG_MODE false
+#define GAME_TITLE "LIZARD! LIZARD! LIZARD!!!"
+//#define BACKGROUND_BUFFER_COLOR (Color) {248, 58, 95, 255}
+#define BACKGROUND_BUFFER_COLOR RED
 
 #define VIRTUAL_SCREEN_WIDTH 1920
 #define VIRTUAL_SCREEN_HEIGHT 1080

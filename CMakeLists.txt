@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.13)
 set(CMAKE_CXX_STANDARD_REQUIRED 23)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-project(Lizard_Meme)
-set(EXECUTABLE lizard_meme)
+project(Lizard_Lizard_Lizard)
+set(EXECUTABLE lizard_lizard_lizard)
 
 # Platform detection and raylib configuration
 if (EMSCRIPTEN)

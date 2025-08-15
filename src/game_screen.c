@@ -67,7 +67,7 @@ ScreenID gameScreenUpdate(GameScreen *gameScreen, float dt)
 void gameScreenDraw(GameScreen *gameScreen, int currentScreenWidth, int currentScreenHeight)
 {
     BeginTextureMode(gameScreen->target);
-        ClearBackground(RED);
+        ClearBackground(BACKGROUND_BUFFER_COLOR);
         drawEntities(&gameScreen->entityManager);
         drawPlayer(&gameScreen->player);
         DrawText(TextFormat("%d", gameScreen->score), VIRTUAL_SCREEN_WIDTH/2, 30,

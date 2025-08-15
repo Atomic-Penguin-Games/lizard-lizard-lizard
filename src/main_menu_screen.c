@@ -33,9 +33,9 @@ ScreenID mainMenuScreenUpdate(float dt)
 void mainMenuScreenDraw(int screenWidth, int screenHeight)
 {
     // Draw title
-    const char* title = "Lizard Meme Game";
+    const char* title = GAME_TITLE;
     int titleWidth = MeasureText(title, 60);
-    DrawText(title, SCREEN_WIDTH / 2 - titleWidth / 2, SCREEN_HEIGHT / 4, 60, RAYWHITE);
+    DrawText(title, (screenWidth / 2) - (titleWidth / 2), screenHeight / 4, 60, RAYWHITE);
     
     // Draw Play button
     Rectangle playButton = {

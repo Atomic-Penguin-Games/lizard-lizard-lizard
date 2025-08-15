@@ -34,22 +34,22 @@ jobs:
     
     - name: Create macOS app bundle
       run: |
-        mkdir -p build/LizardMeme.app/Contents/{MacOS,Resources}
-        cp build/lizard_meme build/LizardMeme.app/Contents/MacOS/
-        cp -r res build/LizardMeme.app/Contents/Resources/
+        mkdir -p build/LizardLizardLizard.app/Contents/{MacOS,Resources}
+        cp build/lizard_lizard_lizard build/LizardLizardLizard.app/Contents/MacOS/
+        cp -r res build/LizardLizardLizard.app/Contents/Resources/
         
         # Create Info.plist
-        cat > build/LizardMeme.app/Contents/Info.plist << EOF
+        cat > build/LizardLizardLizard.app/Contents/Info.plist << EOF
         <?xml version="1.0" encoding="UTF-8"?>
         <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
         <plist version="1.0">
         <dict>
             <key>CFBundleExecutable</key>
-            <string>lizard_meme</string>
+            <string>lizard_lizard_lizard</string>
             <key>CFBundleIdentifier</key>
             <string>com.yourname.lizardmeme</string>
             <key>CFBundleName</key>
-            <string>Lizard Meme</string>
+            <string>Lizard Lizard Lizard</string>
             <key>CFBundleVersion</key>
             <string>1.0</string>
             <key>CFBundleShortVersionString</key>
@@ -64,4 +64,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: lizard-meme-macos
-        path: build/LizardMeme.app
+        path: build/LizardLizardLizard.app

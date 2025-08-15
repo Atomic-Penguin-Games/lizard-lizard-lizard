@@ -32,7 +32,7 @@ int main(void)
     ScreenID nextScreen = SCREEN_MAIN_MENU;
 
     // Enable fullscreen support for web builds
-    //SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     
     InitWindow(windowWidth, windowHeight, "Lizard Meme");
     SetTargetFPS(60);
@@ -83,7 +83,7 @@ int main(void)
       
       // Draw current screen
       BeginDrawing();
-          ClearBackground(DARKBLUE);
+          ClearBackground(BACKGROUND_BUFFER_COLOR);
           
           switch (currentScreen)
           {
