@@ -8,7 +8,7 @@
 //GAME OVER screen overlay settings
 // the alpha channel of this color determines how transparent the game over screen' overlay is.`
 #define TRANSPARENCY_OVERLAY_COLOR (Color) {0, 0, 0, 120}
-#define GAMEOVER_DIALOG_COLOR BLACK
+#define GAMEOVER_DIALOG_COLOR DARKGRAY
 #define GAMEOVER_DIALOG_OUTLINE_COLOR WHITE
 #define GAMEOVER_FONT_SIZE 24
 #define GAMEOVER_SCORE_FONT_SIZE 20
@@ -32,6 +32,8 @@
 #define PLAYER_SPRITE_HEIGHT 190
 #define PLAYER_SPRITE_SCALE 0.14f
 #define PLAYER_HITBOX_COUNT 4
+//TODO these should use percentages of the sprite, 
+//so they automatically scale when changing player size
 #define PLAYER_HITBOX_X_OFFSET 72
 #define PLAYER_HITBOX_Y_OFFSET 55
 #define PLAYER_HITBOX_WIDTH 60

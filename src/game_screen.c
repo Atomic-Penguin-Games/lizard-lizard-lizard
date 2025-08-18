@@ -6,6 +6,10 @@
 #include "definitions.h"
 #include "math.h"
 
+// Static function prototypes
+static void drawGameOverDialog(int score);
+static void drawGameOverOverlay(int score);
+
 GameScreen gameScreenInit(GraphicsManager *gm, SoundManager *sm)
 {
     EntityManager entityManager = initEntityManager();
@@ -64,6 +68,67 @@ ScreenID gameScreenUpdate(GameScreen *gameScreen, float dt)
     return SCREEN_GAME;
 }
 
+// static int drawCenteredGameOverText()
+// {
+//     int 
+// }
+
+static void drawGameOverDialog(int score)
+{
+    // Semi-transparent overlay
+    DrawRectangle(0, 0, VIRTUAL_SCREEN_WIDTH, VIRTUAL_SCREEN_HEIGHT, 
+                 (Color){0, 0, 0, 180});
+    
+    // Death dialog dimensions (half screen wide, 1/3 screen tall)
+    int dialogWidth = VIRTUAL_SCREEN_WIDTH / 2;
+    int dialogHeight = VIRTUAL_SCREEN_HEIGHT / 3;
+    int dialogX = (VIRTUAL_SCREEN_WIDTH - dialogWidth) / 2;
+    int dialogY = (VIRTUAL_SCREEN_HEIGHT - dialogHeight) / 2;
+    
+    // Dialog background
+    DrawRectangle(dialogX, dialogY, dialogWidth, dialogHeight, GAMEOVER_DIALOG_COLOR);
+    DrawRectangleLines(dialogX, dialogY, dialogWidth, dialogHeight, GAMEOVER_DIALOG_OUTLINE_COLOR);
+    
+    // Text content
+    const char* gameOverText = "GAME OVER";
+    const char* scoreText = TextFormat("Final Score: %d", score);
+    const char* replayText = "Press SPACE to Replay";
+    const char* menuText = "Press ESC for Main Menu";
+    
+    // Center text in dialog
+    int gameOverWidth = MeasureText(gameOverText, GAMEOVER_FONT_SIZE);
+    int scoreWidth = MeasureText(scoreText, GAMEOVER_SCORE_FONT_SIZE);
+    int replayWidth = MeasureText(replayText, GAMEOVER_INSTRUCTION_FONT_SIZE);
+    int menuWidth = MeasureText(menuText, GAMEOVER_INSTRUCTION_FONT_SIZE);
+    
+    int textX = dialogX + (dialogWidth - gameOverWidth) / 2;
+    int textY = dialogY + 20;
+    
+    DrawText(gameOverText, textX, textY, GAMEOVER_FONT_SIZE, RED);
+    
+    textX = dialogX + (dialogWidth - scoreWidth) / 2;
+    textY += GAMEOVER_FONT_SIZE + 15;
+    DrawText(scoreText, textX, textY, GAMEOVER_SCORE_FONT_SIZE, WHITE);
+    
+    textX = dialogX + (dialogWidth - replayWidth) / 2;
+    textY += GAMEOVER_SCORE_FONT_SIZE + 20;
+    DrawText(replayText, textX, textY, GAMEOVER_INSTRUCTION_FONT_SIZE, LIGHTGRAY);
+    
+    textX = dialogX + (dialogWidth - menuWidth) / 2;
+    textY += GAMEOVER_INSTRUCTION_FONT_SIZE + 10;
+    DrawText(menuText, textX, textY, GAMEOVER_INSTRUCTION_FONT_SIZE, LIGHTGRAY);
+}
+
+static void drawGameOverOverlay(int score)
+{
+    // Draw the semi-transparent overlay over the entire screen
+    DrawRectangle(0, 0, VIRTUAL_SCREEN_WIDTH, VIRTUAL_SCREEN_HEIGHT, 
+                 TRANSPARENCY_OVERLAY_COLOR);
+    
+    // Draw the game over dialog on top of the overlay
+    drawGameOverDialog(score);
+}
+
 void gameScreenDraw(GameScreen *gameScreen, int currentScreenWidth, int currentScreenHeight)
 {
     BeginTextureMode(gameScreen->target);
@@ -75,52 +140,7 @@ void gameScreenDraw(GameScreen *gameScreen, int currentScreenWidth, int currentS
         
         // Draw death overlay if needed
         if (gameScreen->state == GAME_STATE_DEATH_OVERLAY) {
-            // Semi-transparent overlay
-            DrawRectangle(0, 0, VIRTUAL_SCREEN_WIDTH, VIRTUAL_SCREEN_HEIGHT, 
-                         (Color){0, 0, 0, 180});
-            
-            // Death dialog dimensions (half screen wide, 1/3 screen tall)
-            int dialogWidth = VIRTUAL_SCREEN_WIDTH / 2;
-            int dialogHeight = VIRTUAL_SCREEN_HEIGHT / 3;
-            int dialogX = (VIRTUAL_SCREEN_WIDTH - dialogWidth) / 2;
-            int dialogY = (VIRTUAL_SCREEN_HEIGHT - dialogHeight) / 2;
-            
-            // Dialog background
-            DrawRectangle(dialogX, dialogY, dialogWidth, dialogHeight, DARKGRAY);
-            DrawRectangleLines(dialogX, dialogY, dialogWidth, dialogHeight, WHITE);
-            
-            // Text content
-            const char* gameOverText = "GAME OVER";
-            const char* scoreText = TextFormat("Final Score: %d", gameScreen->score);
-            const char* replayText = "Press SPACE to Replay";
-            const char* menuText = "Press ESC for Main Menu";
-            
-            int gameOverFontSize = 24;
-            int scoreFontSize = 20;
-            int instructionFontSize = 16;
-            
-            // Center text in dialog
-            int gameOverWidth = MeasureText(gameOverText, gameOverFontSize);
-            int scoreWidth = MeasureText(scoreText, scoreFontSize);
-            int replayWidth = MeasureText(replayText, instructionFontSize);
-            int menuWidth = MeasureText(menuText, instructionFontSize);
-            
-            int textX = dialogX + (dialogWidth - gameOverWidth) / 2;
-            int textY = dialogY + 20;
-            
-            DrawText(gameOverText, textX, textY, gameOverFontSize, RED);
-            
-            textX = dialogX + (dialogWidth - scoreWidth) / 2;
-            textY += gameOverFontSize + 15;
-            DrawText(scoreText, textX, textY, scoreFontSize, WHITE);
-            
-            textX = dialogX + (dialogWidth - replayWidth) / 2;
-            textY += scoreFontSize + 20;
-            DrawText(replayText, textX, textY, instructionFontSize, LIGHTGRAY);
-            
-            textX = dialogX + (dialogWidth - menuWidth) / 2;
-            textY += instructionFontSize + 10;
-            DrawText(menuText, textX, textY, instructionFontSize, LIGHTGRAY);
+            drawGameOverOverlay(gameScreen->score);
         }
     EndTextureMode();
 
