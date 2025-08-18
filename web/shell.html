@@ -4,9 +4,9 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-    <title>Lizard Meme Game</title>
+    <title>🦎 Lizard! Lizard! Lizard!!! 🦎</title>
 
-    <meta name="title" content="Lizard Meme Game">
+    <meta name="title" content="🦎 Lizard! Lizard! Lizard!!! 🦎">
     <meta name="description" content="A fun web game built with raylib">
     <meta name="keywords" content="game, lizard, web, html5">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,13 +22,16 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        min-height: 100vh;
+        height: 100vh;
+        overflow: hidden;
       }
 
       h1 {
         color: #4CAF50;
-        margin-bottom: 20px;
+        margin: 5px 0;
         text-align: center;
+        font-size: 1.2em;
+        font-weight: bold;
       }
 
       .game-container {
@@ -36,16 +39,24 @@
         flex-direction: column;
         align-items: center;
         background-color: #2a2a2a;
-        padding: 20px;
+        padding: 10px;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        max-width: 95vw;
+        max-height: 95vh;
+        box-sizing: border-box;
       }
 
       .canvas-container {
         border: 2px solid #4CAF50;
         border-radius: 5px;
         background: black;
-        margin-bottom: 20px;
+        margin: 5px 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        max-width: 100%;
+        max-height: calc(95vh - 120px);
       }
 
       /* Canvas must not have any border or padding, or mouse coords will be wrong */
@@ -53,29 +64,35 @@
         border: 0px none;
         background: black;
         display: block;
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
       }
 
       .controls {
         display: flex;
         gap: 10px;
-        margin-bottom: 20px;
+        margin: 5px 0;
+        flex-wrap: wrap;
+        justify-content: center;
       }
 
       .status-area {
         text-align: center;
-        margin-bottom: 20px;
+        margin: 5px 0;
       }
 
       .spinner {
-        height: 20px;
-        width: 20px;
-        margin: 0 auto 10px;
+        height: 15px;
+        width: 15px;
+        margin: 0 auto 5px;
         display: inline-block;
         animation: rotation 0.8s linear infinite;
-        border-left: 3px solid #666;
-        border-right: 3px solid #666;
-        border-bottom: 3px solid #666;
-        border-top: 3px solid #4CAF50;
+        border-left: 2px solid #666;
+        border-right: 2px solid #666;
+        border-bottom: 2px solid #666;
+        border-top: 2px solid #4CAF50;
         border-radius: 100%;
         background-color: transparent;
       }
@@ -88,13 +105,14 @@
       #status {
         color: #4CAF50;
         font-weight: bold;
-        margin-top: 10px;
+        margin-top: 5px;
+        font-size: 0.9em;
       }
 
       #progress {
-        width: 300px;
-        height: 10px;
-        margin: 10px auto;
+        width: 200px;
+        height: 8px;
+        margin: 5px auto;
         border-radius: 5px;
         background-color: #333;
       }
@@ -103,11 +121,11 @@
         background-color: #4CAF50;
         border: none;
         color: white;
-        padding: 10px 20px;
+        padding: 8px 15px;
         text-align: center;
         text-decoration: none;
         display: inline-block;
-        font-size: 14px;
+        font-size: 12px;
         cursor: pointer;
         border-radius: 5px;
         transition: background-color 0.3s;
@@ -124,11 +142,27 @@
       .hidden {
         display: none !important;
       }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 1em;
+        }
+        
+        button {
+          padding: 6px 12px;
+          font-size: 11px;
+        }
+        
+        .game-container {
+          padding: 8px;
+        }
+      }
     </style>
   </head>
   <body>
     <div class="game-container">
-      <h1>🦎 Lizard Meme Game</h1>
+      <h1>🦎 Lizard! Lizard! Lizard!!! 🦎</h1>
       
       <div class="status-area">
         <div class="spinner" id='spinner'></div>

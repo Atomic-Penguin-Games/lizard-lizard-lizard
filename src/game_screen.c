@@ -14,12 +14,23 @@ static int drawGameOverDialogText(const char* text, int fontSize,
 static void drawGameOverDialog(int score, int screenWidth, int screenHeight);
 static void drawGameOverOverlay(int score, int screenWidth, int screenHeight);
 
-static bool replayButtonPressed = false;
-static bool quitButtonPressed = false;
-static bool gameCursorInitialized = false;
+// Game Screen State Structure
+typedef struct {
+    bool replayButtonPressed;
+    bool quitButtonPressed;
+    bool gameCursorInitialized;
+} GameScreenState;
+
+// Static state instance
+static GameScreenState gameState = {0};
 
 GameScreen gameScreenInit(GraphicsManager *gm, SoundManager *sm)
 {
+    // Initialize game screen state
+    gameState.replayButtonPressed = false;
+    gameState.quitButtonPressed = false;
+    gameState.gameCursorInitialized = false;
+    
     EntityManager entityManager = initEntityManager();
     Player player = createPlayer(&gm->playerSpritesheet);
     RenderTexture2D target = LoadRenderTexture(VIRTUAL_SCREEN_WIDTH, VIRTUAL_SCREEN_HEIGHT);
@@ -55,7 +66,7 @@ ScreenID gameScreenUpdate(GameScreen *gameScreen, float dt)
         {
             case SCORE_COLLISION:
                 gameScreen->score++;
-                playScoreSound(gameScreen->soundManager);
+                playRandomScoreSound(gameScreen->soundManager);
                 playAnimation(&gameScreen->player);
                 break;
             case DEATH_COLLISION:
@@ -64,30 +75,30 @@ ScreenID gameScreenUpdate(GameScreen *gameScreen, float dt)
                 
                 // Initialize cursor manager for game over dialog
                 CursorManagerInit();
-                gameCursorInitialized = true;
+                gameState.gameCursorInitialized = true;
                 break;
             default:
                 break;
         }
     } else if (gameScreen->state == GAME_STATE_DEATH_OVERLAY) {
         // Death overlay input handling
-        if (IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_ENTER) || replayButtonPressed) {
+        if (IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_ENTER) || gameState.replayButtonPressed) {
             // Replay - reset game state
-            if (gameCursorInitialized) {
+            if (gameState.gameCursorInitialized) {
                 CursorManagerCleanup();
-                gameCursorInitialized = false;
+                gameState.gameCursorInitialized = false;
             }
-            replayButtonPressed = false;
+            gameState.replayButtonPressed = false;
             gameScreenReset(gameScreen);
         }
         
-        if (quitButtonPressed) {
+        if (gameState.quitButtonPressed) {
             // Return to main menu
-            if (gameCursorInitialized) {
+            if (gameState.gameCursorInitialized) {
                 CursorManagerCleanup();
-                gameCursorInitialized = false;
+                gameState.gameCursorInitialized = false;
             }
-            quitButtonPressed = false;
+            gameState.quitButtonPressed = false;
             return SCREEN_MAIN_MENU;
         }
     }
@@ -147,9 +158,9 @@ static void drawGameOverDialog(int score, int screenWidth, int screenHeight)
         textY, GAMEOVER_BUTTON_WIDTH, GAMEOVER_BUTTON_HEIGHT
     };
 
-    GuiSetStyle(DEFAULT, TEXT_SIZE, MAIN_MENU_BUTTON_FONT_SIZE);
+    GuiSetStyle(DEFAULT, TEXT_SIZE, GAMEOVER_BUTTON_FONT_SIZE);
     if (GuiButton(replayButton, "#131#Replay")) {
-        replayButtonPressed = true;
+        gameState.replayButtonPressed = true;
     }
 
     textY += replayButton.height + 5;
@@ -164,20 +175,20 @@ static void drawGameOverDialog(int score, int screenWidth, int screenHeight)
     };
 
     if (GuiButton(quitButton, "#113#Quit")) {
-        quitButtonPressed = true;
+        gameState.quitButtonPressed = true;
     }
 
     // Add cursor manager support for web builds
-    if (gameCursorInitialized) {
+    if (gameState.gameCursorInitialized) {
         Vector2 mousePos = CursorManagerGetPosition();
         
         // Manual button click detection for web compatibility
         if (CursorManagerIsPressed()) {
             if (CheckCollisionPointRec(mousePos, replayButton)) {
-                replayButtonPressed = true;
+                gameState.replayButtonPressed = true;
             }
             if (CheckCollisionPointRec(mousePos, quitButton)) {
-                quitButtonPressed = true;
+                gameState.quitButtonPressed = true;
             }
         }
         
@@ -266,8 +277,8 @@ void gameScreenReset(GameScreen *gameScreen)
 void gameScreenUnload()
 {
     // Cleanup cursor manager if it's still initialized
-    if (gameCursorInitialized) {
+    if (gameState.gameCursorInitialized) {
         CursorManagerCleanup();
-        gameCursorInitialized = false;
+        gameState.gameCursorInitialized = false;
     }
 }

@@ -33,7 +33,7 @@ ScreenID splashScreenUpdate(float dt);
 void splashScreenDraw();
 void splashScreenUnload();
 
-void mainMenuScreenInit();
+void mainMenuScreenInit(GraphicsManager *gm, SoundManager *sm, int screenWidth, int screenHeight);
 ScreenID mainMenuScreenUpdate(float dt);
 void mainMenuScreenDraw(int screenWidth, int screenHeight);
 void mainMenuScreenUnload();

@@ -44,11 +44,10 @@ int main(void)
 
     initRandomizer();
 
-    // Initialize starting screen
-    mainMenuScreenInit();
-
     GraphicsManager graphicsManager = initGraphicsManager();
     SoundManager soundManager = initSoundManager();
+
+    mainMenuScreenInit(&graphicsManager, &soundManager, GetScreenWidth(), GetScreenHeight());
 
     // Game screen will be initialized when needed
     GameScreen gameScreen;
@@ -116,7 +115,7 @@ int main(void)
                       printf("Returning to main menu - game screen reset\n");
                   }
                   // Re-initialize main menu to ensure cursor is properly set up
-                  mainMenuScreenInit();
+                  mainMenuScreenInit(&graphicsManager, &soundManager, currentWindowWidth, currentWindowHeight);
                   currentScreen = nextScreen;
                   break;
                   

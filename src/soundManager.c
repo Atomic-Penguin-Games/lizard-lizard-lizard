@@ -25,7 +25,12 @@ void loadSounds(SoundManager *soundManager)
     soundManager->scoreSounds[2] = scoreSound3;
 }
 
-void playScoreSound(SoundManager *sm)
+void playRandomScoreSound(SoundManager *sm)
 {
     PlaySound(sm->scoreSounds[randomNum(3)-1]);
+}
+
+void playDefaultScoreSound(SoundManager *sm)
+{
+    PlaySound(sm->scoreSounds[0]);
 }

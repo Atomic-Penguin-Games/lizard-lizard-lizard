@@ -8,4 +8,5 @@ typedef struct SoundManager {
 SoundManager initSoundManager();
 void initSoundDevice();
 void loadSounds(SoundManager *sm);
-void playScoreSound(SoundManager *sm);
+void playRandomScoreSound(SoundManager *sm);
+void playDefaultScoreSound(SoundManager *sm);

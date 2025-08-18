@@ -1,31 +1,47 @@
+#include <raygui.h>
+#include <stdio.h>
 #include "screens.h"
 #include "definitions.h"
 #include "cursorManager.h"
-#include <raygui.h>
-#include <stdio.h>
 
-// Static variables to communicate between Draw and Update
-static bool playButtonPressed = false;
-static bool exitButtonPressed = false;
+// Main Menu State Structure
+typedef struct {
+    Player player;
+    bool playButtonPressed;
+    bool exitButtonPressed;
+} MainMenuState;
 
-void mainMenuScreenInit()
+// Static state instance
+static MainMenuState menuState = {0};
+
+void mainMenuScreenInit(GraphicsManager *gm, SoundManager *sm, int screenWidth, int screenHeight)
 {
+    menuState.playButtonPressed = false;
+    menuState.exitButtonPressed = false;
+    Player player = createPlayer(&gm->playerSpritesheet);
+    player.position.x = screenWidth / 5;
+    player.position.y = screenHeight / 2;
+    menuState.player = player;
+    playAnimation(&menuState.player);
+    playDefaultScoreSound(sm);
     CursorManagerInit();
 }
 
 ScreenID mainMenuScreenUpdate(float dt)
 {   
     // Check if buttons were pressed in the draw function
-    if (playButtonPressed || IsKeyPressed(KEY_SPACE)) {
-        playButtonPressed = false;  // Reset the flag
+    if (menuState.playButtonPressed || IsKeyPressed(KEY_SPACE)) {
+        menuState.playButtonPressed = false;  // Reset the flag
         return SCREEN_GAME;
     }
     
-    if (exitButtonPressed) {
-        exitButtonPressed = false;  // Reset the flag
+    if (menuState.exitButtonPressed) {
+        menuState.exitButtonPressed = false;  // Reset the flag
         return SCREEN_QUIT;
     }
     
+    updatePlayer(&menuState.player, (Vector2){0,0}, dt);
+
     return SCREEN_MAIN_MENU;
 }
 
@@ -54,10 +70,10 @@ void mainMenuScreenDraw(int screenWidth, int screenHeight)
 
     GuiSetStyle(DEFAULT, TEXT_SIZE, MAIN_MENU_BUTTON_FONT_SIZE);
     if (GuiButton(playButton, "#131#Play")) {
-        playButtonPressed = true;
+        menuState.playButtonPressed = true;
     }
     if (GuiButton(exitButton, "Quit")) {
-        exitButtonPressed = true;
+        menuState.exitButtonPressed = true;
     }
     
     // Get mouse position and handle clicks using the cursor manager module
@@ -66,10 +82,10 @@ void mainMenuScreenDraw(int screenWidth, int screenHeight)
     // Manual button click detection for web compatibility
     if (CursorManagerIsPressed()) {
         if (CheckCollisionPointRec(mousePos, playButton)) {
-            playButtonPressed = true;
+            menuState.playButtonPressed = true;
         }
         if (CheckCollisionPointRec(mousePos, exitButton)) {
-            exitButtonPressed = true;
+            menuState.exitButtonPressed = true;
         }
     }
     
@@ -83,8 +99,9 @@ void mainMenuScreenDraw(int screenWidth, int screenHeight)
                           exitButton.width + 4, exitButton.height + 4, YELLOW);
     }
     
-    // Draw custom cursor
     CursorManagerDraw();
+    menuState.player.position.x = screenWidth / 6;
+    drawPlayer(&menuState.player);
 }
 
 void mainMenuScreenUnload()
