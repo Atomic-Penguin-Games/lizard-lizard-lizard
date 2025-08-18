@@ -32,7 +32,7 @@ GameScreen gameScreenInit(GraphicsManager *gm, SoundManager *sm)
     gameState.gameCursorInitialized = false;
     
     EntityManager entityManager = initEntityManager();
-    Player player = createPlayer(&gm->playerSpritesheet);
+    Player player = createPlayer(&gm->playerSpritesheet, PLAYER_SPRITE_SCALE);
     RenderTexture2D target = LoadRenderTexture(VIRTUAL_SCREEN_WIDTH, VIRTUAL_SCREEN_HEIGHT);
     SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR);
     GameScreen gameScreen = {

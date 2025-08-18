@@ -28,12 +28,13 @@ typedef struct Player {
   int currentFrame;
   float animationTimer;
   float frameTime;
+  float scale;
   
   // Facing direction
   bool facingLeft;
 } Player;
 
-Player createPlayer(Texture *sprite);
+Player createPlayer(Texture *sprite, float playerScale);
 void initHitboxPointers(Player *player);
 void drawPlayer(Player *player);
 void updatePlayer(Player *player, Vector2 velocity, float deltaTime);

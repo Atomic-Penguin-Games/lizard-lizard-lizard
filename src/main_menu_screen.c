@@ -18,9 +18,9 @@ void mainMenuScreenInit(GraphicsManager *gm, SoundManager *sm, int screenWidth, 
 {
     menuState.playButtonPressed = false;
     menuState.exitButtonPressed = false;
-    Player player = createPlayer(&gm->playerSpritesheet);
-    player.position.x = screenWidth / 5;
-    player.position.y = screenHeight / 2;
+    Player player = createPlayer(&gm->playerSpritesheet, MAIN_MENU_CHARACTER_SCALE);
+    player.position.x = screenWidth / 7;
+    player.position.y = screenHeight / 2 + 20;
     menuState.player = player;
     playAnimation(&menuState.player);
     playDefaultScoreSound(sm);
@@ -100,7 +100,7 @@ void mainMenuScreenDraw(int screenWidth, int screenHeight)
     }
     
     CursorManagerDraw();
-    menuState.player.position.x = screenWidth / 6;
+    menuState.player.position.x = screenWidth / 12;
     drawPlayer(&menuState.player);
 }
 

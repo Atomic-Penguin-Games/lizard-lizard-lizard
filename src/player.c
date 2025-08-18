@@ -17,7 +17,7 @@ static void initFrameData(Texture *spriteSheet)
     }
 }
 
-Player createPlayer(Texture *spriteSheet)
+Player createPlayer(Texture *spriteSheet, float playerScale)
 {
     initFrameData(spriteSheet);  // Initialize frame data once with actual texture
     
@@ -54,7 +54,9 @@ Player createPlayer(Texture *spriteSheet)
         .currentFrame = 0,
         .animationTimer = 0.0f,
         .frameTime = 0.03f,  // 10 FPS animation
-        .facingLeft = false  // Start facing right
+        .scale = playerScale, //scalar to use to determine how big the player sprite should be drawn
+        
+        .facingLeft = false,  // Start facing right
     };
     updateHitboxes(&player);
     
@@ -83,8 +85,8 @@ void drawPlayer(Player *player)
         Rectangle dest = {
             player->position.x,
             player->position.y,
-            frameWidth * PLAYER_SPRITE_SCALE * 2.0f,  // Double the size
-            frameHeight * PLAYER_SPRITE_SCALE * 2.0f  // Double the size
+            frameWidth * player->scale * 2.0f,  // Double the size
+            frameHeight * player->scale * 2.0f  // Double the size
         };
         
         DrawTexturePro(*player->spriteSheet, source, dest, (Vector2){0, 0}, 0.0f, RAYWHITE);
@@ -108,8 +110,8 @@ void drawPlayer(Player *player)
         Rectangle dest = {
             player->position.x,
             player->position.y,
-            frameWidth * PLAYER_SPRITE_SCALE * 2.0f,  // Match animation scale
-            frameHeight * PLAYER_SPRITE_SCALE * 2.0f  // Match animation scale
+            frameWidth * player->scale * 2.0f,  // Match animation scale
+            frameHeight * player->scale * 2.0f  // Match animation scale
         };
         
         DrawTexturePro(*player->spriteSheet, source, dest, (Vector2){0, 0}, 0.0f, RAYWHITE);
@@ -183,7 +185,7 @@ void updateHitboxes(Player *player)
     {
         //Mirror sprite to face left
         //Calculate the sprite width at current scale
-        float spriteWidth = frameWidth * PLAYER_SPRITE_SCALE * 2.0f;  // Same scale as used in drawing
+        float spriteWidth = frameWidth * player->scale * 2.0f;  // Same scale as used in drawing
         
         // Formula: rightEdge - (originalOffset + width) for the new left edge
         for (int i = 0; i < PLAYER_HITBOX_COUNT; i++)
