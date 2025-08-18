@@ -115,6 +115,8 @@ int main(void)
                       gameScreenInitialized = false;
                       printf("Returning to main menu - game screen reset\n");
                   }
+                  // Re-initialize main menu to ensure cursor is properly set up
+                  mainMenuScreenInit();
                   currentScreen = nextScreen;
                   break;
                   

@@ -1,4 +1,4 @@
-#include "web_cursor.h"
+#include "cursorManager.h"
 #include <stdio.h>
 
 #ifdef __EMSCRIPTEN__
@@ -37,7 +37,7 @@ EM_BOOL mouse_up_callback(int eventType, const EmscriptenMouseEvent *mouseEvent,
 
 #endif
 
-void WebCursorInit(void)
+void CursorManagerInit(void)
 {
     // Hide the system cursor for both desktop and web builds
     HideCursor();
@@ -50,7 +50,7 @@ void WebCursorInit(void)
 #endif
 }
 
-Vector2 WebCursorGetPosition(void)
+Vector2 CursorManagerGetPosition(void)
 {
 #ifdef __EMSCRIPTEN__
     // For web builds, use our custom mouse tracking since raylib's doesn't work
@@ -61,7 +61,7 @@ Vector2 WebCursorGetPosition(void)
 #endif
 }
 
-bool WebCursorIsPressed(void)
+bool CursorManagerIsPressed(void)
 {
 #ifdef __EMSCRIPTEN__
     // For web builds, use our custom click tracking
@@ -76,9 +76,9 @@ bool WebCursorIsPressed(void)
 #endif
 }
 
-void WebCursorDraw(void)
+void CursorManagerDraw(void)
 {
-    Vector2 mousePos = WebCursorGetPosition();
+    Vector2 mousePos = CursorManagerGetPosition();
     
     // Draw custom cursor at the correct mouse position
     DrawCircle((int)mousePos.x, (int)mousePos.y, 12, WHITE);
@@ -87,7 +87,7 @@ void WebCursorDraw(void)
     DrawCircle((int)mousePos.x, (int)mousePos.y, 5, RED);
 }
 
-void WebCursorCleanup(void)
+void CursorManagerCleanup(void)
 {
     // Restore system cursor
     ShowCursor();

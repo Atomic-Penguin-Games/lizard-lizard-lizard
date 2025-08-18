@@ -5,6 +5,7 @@
 #include "player.h"
 #include "definitions.h"
 #include "raygui.h"
+#include "cursorManager.h"
 #include "math.h"
 
 // Static function prototypes
@@ -15,6 +16,7 @@ static void drawGameOverOverlay(int score, int screenWidth, int screenHeight);
 
 static bool replayButtonPressed = false;
 static bool quitButtonPressed = false;
+static bool gameCursorInitialized = false;
 
 GameScreen gameScreenInit(GraphicsManager *gm, SoundManager *sm)
 {
@@ -59,15 +61,34 @@ ScreenID gameScreenUpdate(GameScreen *gameScreen, float dt)
             case DEATH_COLLISION:
                 // Switch to death overlay
                 gameScreen->state = GAME_STATE_DEATH_OVERLAY;
+                
+                // Initialize cursor manager for game over dialog
+                CursorManagerInit();
+                gameCursorInitialized = true;
                 break;
             default:
                 break;
         }
     } else if (gameScreen->state == GAME_STATE_DEATH_OVERLAY) {
         // Death overlay input handling
-        if (IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_ENTER)) {
+        if (IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_ENTER) || replayButtonPressed) {
             // Replay - reset game state
+            if (gameCursorInitialized) {
+                CursorManagerCleanup();
+                gameCursorInitialized = false;
+            }
+            replayButtonPressed = false;
             gameScreenReset(gameScreen);
+        }
+        
+        if (quitButtonPressed) {
+            // Return to main menu
+            if (gameCursorInitialized) {
+                CursorManagerCleanup();
+                gameCursorInitialized = false;
+            }
+            quitButtonPressed = false;
+            return SCREEN_MAIN_MENU;
         }
     }
     
@@ -128,7 +149,7 @@ static void drawGameOverDialog(int score, int screenWidth, int screenHeight)
 
     GuiSetStyle(DEFAULT, TEXT_SIZE, MAIN_MENU_BUTTON_FONT_SIZE);
     if (GuiButton(replayButton, "#131#Replay")) {
-        quitButtonPressed = true;
+        replayButtonPressed = true;
     }
 
     textY += replayButton.height + 5;
@@ -144,6 +165,34 @@ static void drawGameOverDialog(int score, int screenWidth, int screenHeight)
 
     if (GuiButton(quitButton, "#113#Quit")) {
         quitButtonPressed = true;
+    }
+
+    // Add cursor manager support for web builds
+    if (gameCursorInitialized) {
+        Vector2 mousePos = CursorManagerGetPosition();
+        
+        // Manual button click detection for web compatibility
+        if (CursorManagerIsPressed()) {
+            if (CheckCollisionPointRec(mousePos, replayButton)) {
+                replayButtonPressed = true;
+            }
+            if (CheckCollisionPointRec(mousePos, quitButton)) {
+                quitButtonPressed = true;
+            }
+        }
+        
+        // Visual feedback for hover
+        if (CheckCollisionPointRec(mousePos, replayButton)) {
+            DrawRectangleLines(replayButton.x - 2, replayButton.y - 2, 
+                              replayButton.width + 4, replayButton.height + 4, YELLOW);
+        }
+        if (CheckCollisionPointRec(mousePos, quitButton)) {
+            DrawRectangleLines(quitButton.x - 2, quitButton.y - 2, 
+                              quitButton.width + 4, quitButton.height + 4, YELLOW);
+        }
+        
+        // Draw custom cursor
+        CursorManagerDraw();
     }
 
     textY += quitButton.height + 5;
@@ -209,9 +258,16 @@ void gameScreenReset(GameScreen *gameScreen)
     
     // Return to playing state
     gameScreen->state = GAME_STATE_PLAYING;
+    
+    // Hide system cursor for gameplay (cursor manager cleanup shows it, so we need to hide it again)
+    HideCursor();
 }
 
 void gameScreenUnload()
 {
-    
+    // Cleanup cursor manager if it's still initialized
+    if (gameCursorInitialized) {
+        CursorManagerCleanup();
+        gameCursorInitialized = false;
+    }
 }

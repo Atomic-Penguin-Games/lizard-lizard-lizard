@@ -1,6 +1,6 @@
 #include "screens.h"
 #include "definitions.h"
-#include "web_cursor.h"
+#include "cursorManager.h"
 #include <raygui.h>
 #include <stdio.h>
 
@@ -10,7 +10,7 @@ static bool exitButtonPressed = false;
 
 void mainMenuScreenInit()
 {
-    WebCursorInit();
+    CursorManagerInit();
 }
 
 ScreenID mainMenuScreenUpdate(float dt)
@@ -31,6 +31,9 @@ ScreenID mainMenuScreenUpdate(float dt)
 
 void mainMenuScreenDraw(int screenWidth, int screenHeight)
 {
+    // Ensure system cursor is always hidden on main menu
+    HideCursor();
+    
     // Draw title
     const char* title = GAME_TITLE;
     int titleWidth = MeasureText(title, 60);
@@ -57,11 +60,11 @@ void mainMenuScreenDraw(int screenWidth, int screenHeight)
         exitButtonPressed = true;
     }
     
-    // Get mouse position and handle clicks using the web cursor module
-    Vector2 mousePos = WebCursorGetPosition();
+    // Get mouse position and handle clicks using the cursor manager module
+    Vector2 mousePos = CursorManagerGetPosition();
     
     // Manual button click detection for web compatibility
-    if (WebCursorIsPressed()) {
+    if (CursorManagerIsPressed()) {
         if (CheckCollisionPointRec(mousePos, playButton)) {
             playButtonPressed = true;
         }
@@ -81,10 +84,10 @@ void mainMenuScreenDraw(int screenWidth, int screenHeight)
     }
     
     // Draw custom cursor
-    WebCursorDraw();
+    CursorManagerDraw();
 }
 
 void mainMenuScreenUnload()
 {
-    WebCursorCleanup();
+    CursorManagerCleanup();
 }
