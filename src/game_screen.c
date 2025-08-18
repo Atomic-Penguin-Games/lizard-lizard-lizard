@@ -143,8 +143,8 @@ static void drawGameOverDialog(int score, int screenWidth, int screenHeight)
     textY += 20;  // Spacing after score
     
     Rectangle replayButton = {
-        (screenWidth / 2.0f) - (MAIN_MENU_BUTTON_WIDTH / 2.0f),
-        textY, MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT
+        (screenWidth / 2.0f) - (GAMEOVER_BUTTON_WIDTH / 2.0f),
+        textY, GAMEOVER_BUTTON_WIDTH, GAMEOVER_BUTTON_HEIGHT
     };
 
     GuiSetStyle(DEFAULT, TEXT_SIZE, MAIN_MENU_BUTTON_FONT_SIZE);
@@ -159,8 +159,8 @@ static void drawGameOverDialog(int score, int screenWidth, int screenHeight)
     textY += 20;  // Spacing between instructions
 
     Rectangle quitButton = {
-        (screenWidth / 2.0f) - (MAIN_MENU_BUTTON_WIDTH / 2.0f),
-        textY, MAIN_MENU_BUTTON_WIDTH, MAIN_MENU_BUTTON_HEIGHT
+        (screenWidth / 2.0f) - (GAMEOVER_BUTTON_WIDTH / 2.0f),
+        textY, GAMEOVER_BUTTON_WIDTH, GAMEOVER_BUTTON_HEIGHT
     };
 
     if (GuiButton(quitButton, "#113#Quit")) {
