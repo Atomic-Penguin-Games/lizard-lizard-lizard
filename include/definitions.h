@@ -1,7 +1,7 @@
 #pragma once
 #include <raylib.h>
 
-#define DEBUG_MODE true
+#define DEBUG_MODE false
 #define GAME_TITLE "LIZARD! LIZARD! LIZARD!!!"
 #define BACKGROUND_BUFFER_COLOR (Color) {248, 58, 95, 255}
 

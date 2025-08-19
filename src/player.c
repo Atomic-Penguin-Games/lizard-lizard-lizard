@@ -141,17 +141,17 @@ void updatePlayer(Player *player, Vector2 velocity, float deltaTime)
     player->position.x += velocity.x * deltaTime;
     player->position.y += velocity.y * deltaTime;
 
-    if (player->position.y < 0)
+    if (player->position.y < -40)
     {
-        player->position.y = 0;
-    }else if (player->position.y > VIRTUAL_SCREEN_HEIGHT - PLAYER_SPRITE_HEIGHT)
+        player->position.y = -40;
+    }else if (player->position.y > VIRTUAL_SCREEN_HEIGHT - PLAYER_SPRITE_HEIGHT/2)
     {
-        player->position.y = VIRTUAL_SCREEN_HEIGHT - PLAYER_SPRITE_HEIGHT;
+        player->position.y = VIRTUAL_SCREEN_HEIGHT - PLAYER_SPRITE_HEIGHT/2;
     }
 
-    if (player->position.x < 0)
+    if (player->position.x < -8)
     {
-        player->position.x = 0;
+        player->position.x = -8;
     } else if (player->position.x > VIRTUAL_SCREEN_WIDTH - PLAYER_SPRITE_WIDTH)
     {
         player->position.x = VIRTUAL_SCREEN_WIDTH - PLAYER_SPRITE_WIDTH;
