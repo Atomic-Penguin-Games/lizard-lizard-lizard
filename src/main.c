@@ -48,8 +48,10 @@ int main(void)
 
     GraphicsManager graphicsManager = initGraphicsManager();
     SoundManager soundManager = initSoundManager();
+    CursorManager cursorManager = initCursorManager(&graphicsManager);
 
-    mainMenuScreenInit(&graphicsManager, &soundManager, GetScreenWidth(), GetScreenHeight());
+    mainMenuScreenInit(&graphicsManager, &soundManager, &cursorManager,
+        GetScreenWidth(), GetScreenHeight());
 
     // Game screen will be initialized when needed
     GameScreen gameScreen;
@@ -71,7 +73,7 @@ int main(void)
               break;
           case SCREEN_GAME:
               if (!gameScreenInitialized) {
-                  gameScreen = gameScreenInit(&graphicsManager, &soundManager);
+                  gameScreen = gameScreenInit(&graphicsManager, &soundManager, &cursorManager);
                   gameScreenInitialized = true;
               }
               nextScreen = gameScreenUpdate(&gameScreen, dT);
@@ -112,7 +114,8 @@ int main(void)
                       gameScreenInitialized = false;
                   }
                   // Re-initialize main menu to ensure cursor is properly set up
-                  mainMenuScreenInit(&graphicsManager, &soundManager, currentWindowWidth, currentWindowHeight);
+                  mainMenuScreenInit(&graphicsManager, &soundManager, &cursorManager,
+                    currentWindowWidth, currentWindowHeight);
                   currentScreen = nextScreen;
                   break;
                   

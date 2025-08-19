@@ -2,11 +2,11 @@
 #include <stdio.h>
 #include "screens.h"
 #include "definitions.h"
-#include "cursorManager.h"
 
 // Main Menu State Structure
 typedef struct {
     Player player;
+    CursorManager *cursorManager;
     bool playButtonPressed;
     bool exitButtonPressed;
 } MainMenuState;
@@ -14,17 +14,18 @@ typedef struct {
 // Static state instance
 static MainMenuState menuState = {0};
 
-void mainMenuScreenInit(GraphicsManager *gm, SoundManager *sm, int screenWidth, int screenHeight)
+void mainMenuScreenInit(GraphicsManager *gm, SoundManager *sm, CursorManager *cm,
+    int screenWidth, int screenHeight)
 {
     menuState.playButtonPressed = false;
     menuState.exitButtonPressed = false;
+    menuState.cursorManager = cm;
     Player player = createPlayer(&gm->playerSpritesheet, MAIN_MENU_CHARACTER_SCALE);
     player.position.x = screenWidth / 7;
     player.position.y = screenHeight / 2 + 20;
     menuState.player = player;
     playAnimation(&menuState.player);
     playDefaultScoreSound(sm);
-    CursorManagerInit();
 }
 
 ScreenID mainMenuScreenUpdate(float dt)
@@ -99,7 +100,7 @@ void mainMenuScreenDraw(int screenWidth, int screenHeight)
                           exitButton.width + 4, exitButton.height + 4, YELLOW);
     }
     
-    CursorManagerDraw();
+    CursorManagerDraw(menuState.cursorManager);
     menuState.player.position.x = screenWidth / 12;
     drawPlayer(&menuState.player);
 }

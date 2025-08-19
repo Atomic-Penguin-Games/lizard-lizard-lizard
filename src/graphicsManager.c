@@ -9,6 +9,7 @@ GraphicsManager initGraphicsManager()
         .playerSpritesheet = LoadTexture("res/playerAnimationSpritesheet.png"),
         .lizardSprite = LoadTexture("res/lizardEmoji.png"),
         .sawSprite = LoadTexture("res/circular_saw_blade.png"),
+        .cursorGraphic = LoadTexture("res/mouse_sprite_4.png"),
         .pauseButtonGraphic = LoadTexture("res/pause.png")
     };
     

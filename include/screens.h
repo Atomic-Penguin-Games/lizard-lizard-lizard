@@ -3,6 +3,7 @@
 #include "entityManager.h"
 #include "inputManager.h"
 #include "soundManager.h"
+#include "cursorManager.h"
 #include "player.h"
 
 typedef enum {
@@ -22,6 +23,7 @@ typedef struct {
     EntityManager entityManager;
     GraphicsManager *graphicsManager;
     SoundManager *soundManager;
+    CursorManager *cursorManager;
     Player player;
     RenderTexture2D target;
     int score;
@@ -33,12 +35,13 @@ ScreenID splashScreenUpdate(float dt);
 void splashScreenDraw();
 void splashScreenUnload();
 
-void mainMenuScreenInit(GraphicsManager *gm, SoundManager *sm, int screenWidth, int screenHeight);
+void mainMenuScreenInit(GraphicsManager *gm, SoundManager *sm, CursorManager *cm,
+    int screenWidth, int screenHeight);
 ScreenID mainMenuScreenUpdate(float dt);
 void mainMenuScreenDraw(int screenWidth, int screenHeight);
 void mainMenuScreenUnload();
 
-GameScreen gameScreenInit(GraphicsManager *gm, SoundManager *sm);
+GameScreen gameScreenInit(GraphicsManager *gm, SoundManager *sm, CursorManager *cm);
 ScreenID gameScreenUpdate(GameScreen *gameScreen, float dt);
 void gameScreenDraw(GameScreen *gameScreen, int screenWidth, int screenHeight);
 void gameScreenReset(GameScreen *gameScreen);  // Reset game state for replay

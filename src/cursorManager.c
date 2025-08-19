@@ -1,5 +1,5 @@
-#include "cursorManager.h"
 #include <stdio.h>
+#include "cursorManager.h"
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -37,10 +37,13 @@ EM_BOOL mouse_up_callback(int eventType, const EmscriptenMouseEvent *mouseEvent,
 
 #endif
 
-void CursorManagerInit(void)
+CursorManager initCursorManager(GraphicsManager *gm)
 {
     // Hide the system cursor for both desktop and web builds
     HideCursor();
+    CursorManager cursorManager = {
+        .cursorSprite = &gm->cursorGraphic
+    };
     
 #ifdef __EMSCRIPTEN__
     // Initialize mouse event handling for web
@@ -48,6 +51,7 @@ void CursorManagerInit(void)
     emscripten_set_mousedown_callback("#canvas", NULL, EM_TRUE, mouse_down_callback);
     emscripten_set_mouseup_callback("#canvas", NULL, EM_TRUE, mouse_up_callback);
 #endif
+    return cursorManager;
 }
 
 Vector2 CursorManagerGetPosition(void)
@@ -76,15 +80,17 @@ bool CursorManagerIsPressed(void)
 #endif
 }
 
-void CursorManagerDraw(void)
+void CursorManagerDraw(CursorManager *cm)
 {
     Vector2 mousePos = CursorManagerGetPosition();
+
+    DrawTextureEx(*cm->cursorSprite, mousePos, 0.0f, 0.25f, RAYWHITE);
     
-    // Draw custom cursor at the correct mouse position
-    DrawCircle((int)mousePos.x, (int)mousePos.y, 12, WHITE);
-    DrawCircle((int)mousePos.x, (int)mousePos.y, 10, BLACK);
-    DrawCircle((int)mousePos.x, (int)mousePos.y, 8, YELLOW);
-    DrawCircle((int)mousePos.x, (int)mousePos.y, 5, RED);
+    // // Draw custom cursor at the correct mouse position
+    // DrawCircle((int)mousePos.x, (int)mousePos.y, 12, WHITE);
+    // DrawCircle((int)mousePos.x, (int)mousePos.y, 10, BLACK);
+    // DrawCircle((int)mousePos.x, (int)mousePos.y, 8, YELLOW);
+    // DrawCircle((int)mousePos.x, (int)mousePos.y, 5, RED);
 }
 
 void CursorManagerCleanup(void)

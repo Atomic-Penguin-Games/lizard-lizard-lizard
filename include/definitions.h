@@ -1,6 +1,18 @@
 #pragma once
 #include <raylib.h>
 
+// Platform detection - can be manually overridden
+#ifndef MANUAL_PLATFORM_OVERRIDE
+    #ifdef __EMSCRIPTEN__
+        #define IS_WEB_BUILD true
+    #else
+        #define IS_WEB_BUILD false
+    #endif
+#else
+    // Manual override - set this to true or false as needed
+    #define IS_WEB_BUILD true
+#endif
+
 #define DEBUG_MODE false
 #define GAME_TITLE "LIZARD! LIZARD! LIZARD!!!"
 #define BACKGROUND_BUFFER_COLOR (Color) {248, 58, 95, 255}

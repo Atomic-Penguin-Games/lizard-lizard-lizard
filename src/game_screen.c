@@ -5,14 +5,13 @@
 #include "player.h"
 #include "definitions.h"
 #include "raygui.h"
-#include "cursorManager.h"
 #include "math.h"
 
 // Static function prototypes
 static int drawGameOverDialogText(const char* text, int fontSize, 
     int dialogX, int dialogY, int dialogWidth, Color color);
-static void drawGameOverDialog(int score, int screenWidth, int screenHeight);
-static void drawGameOverOverlay(int score, int screenWidth, int screenHeight);
+static void drawGameOverDialog(GameScreen *gameScreen, int screenWidth, int screenHeight);
+static void drawGameOverOverlay(GameScreen *gameScreen, int screenWidth, int screenHeight);
 
 // Game Screen State Structure
 typedef struct {
@@ -24,7 +23,7 @@ typedef struct {
 // Static state instance
 static GameScreenState gameState = {0};
 
-GameScreen gameScreenInit(GraphicsManager *gm, SoundManager *sm)
+GameScreen gameScreenInit(GraphicsManager *gm, SoundManager *sm, CursorManager *cm)
 {
     // Initialize game screen state
     gameState.replayButtonPressed = false;
@@ -40,6 +39,7 @@ GameScreen gameScreenInit(GraphicsManager *gm, SoundManager *sm)
         .player = player,
         .graphicsManager = gm,
         .soundManager = sm,
+        .cursorManager = cm,
         .target = target,
         .score = 0,
         .state = GAME_STATE_PLAYING
@@ -74,7 +74,7 @@ ScreenID gameScreenUpdate(GameScreen *gameScreen, float dt)
                 gameScreen->state = GAME_STATE_DEATH_OVERLAY;
                 
                 // Initialize cursor manager for game over dialog
-                CursorManagerInit();
+
                 gameState.gameCursorInitialized = true;
                 break;
             default:
@@ -120,7 +120,8 @@ static int drawGameOverDialogText(const char* text, int fontSize,
 
 //TODO I HATE this function. Needs to be made smaller and is too hardcoded.
 //Declarative UI's are HARD in C.
-static void drawGameOverDialog(int score, int screenWidth, int screenHeight)
+static void drawGameOverDialog(GameScreen *gameScreen,
+    int screenWidth, int screenHeight)
 {
     // Semi-transparent overlay
     DrawRectangle(0, 0, screenWidth, screenHeight, 
@@ -138,7 +139,7 @@ static void drawGameOverDialog(int score, int screenWidth, int screenHeight)
     
     // Text content
     const char* gameOverText = "GAME OVER";
-    const char* scoreText = TextFormat("Final Score: %d", score);
+    const char* scoreText = TextFormat("Final Score: %d", gameScreen->score);
     const char* replayText = "Or Press SPACE";
     const char* menuText = "Or Press ESC for Main Menu";
     
@@ -203,7 +204,7 @@ static void drawGameOverDialog(int score, int screenWidth, int screenHeight)
         }
         
         // Draw custom cursor
-        CursorManagerDraw();
+        CursorManagerDraw(gameScreen->cursorManager);
     }
 
     textY += quitButton.height + 5;
@@ -212,14 +213,15 @@ static void drawGameOverDialog(int score, int screenWidth, int screenHeight)
                           dialogX, textY, dialogWidth, LIGHTGRAY);
 }
 
-static void drawGameOverOverlay(int score, int screenWidth, int screenHeight)
+static void drawGameOverOverlay(GameScreen *gameScreen,
+    int screenWidth, int screenHeight)
 {
     // Draw the semi-transparent overlay over the entire screen
     DrawRectangle(0, 0, screenWidth, screenHeight, 
                  TRANSPARENCY_OVERLAY_COLOR);
     
     // Draw the game over dialog on top of the overlay
-    drawGameOverDialog(score, screenWidth, screenHeight);
+    drawGameOverDialog(gameScreen, screenWidth, screenHeight);
 }
 
 void gameScreenDraw(GameScreen *gameScreen, int currentScreenWidth, int currentScreenHeight)
@@ -230,10 +232,9 @@ void gameScreenDraw(GameScreen *gameScreen, int currentScreenWidth, int currentS
         drawPlayer(&gameScreen->player);
         DrawText(TextFormat("%d", gameScreen->score), VIRTUAL_SCREEN_WIDTH/2, 30,
         SCORE_FONT_SIZE, RAYWHITE);
-        DrawTexture(gameScreen->graphicsManager->pauseButtonGraphic, 50, 50, RAYWHITE);
         // Draw death overlay if needed
         if (gameScreen->state == GAME_STATE_DEATH_OVERLAY) {
-            drawGameOverOverlay(gameScreen->score, VIRTUAL_SCREEN_WIDTH, VIRTUAL_SCREEN_HEIGHT);
+            drawGameOverOverlay(gameScreen, VIRTUAL_SCREEN_WIDTH, VIRTUAL_SCREEN_HEIGHT);
         }
     EndTextureMode();
 
@@ -255,6 +256,23 @@ void gameScreenDraw(GameScreen *gameScreen, int currentScreenWidth, int currentS
     
     DrawTexturePro(gameScreen->target.texture, source, dest, (Vector2){0, 0}, 0.0f, WHITE);
     
+    // Draw pause button only for web builds
+    #if IS_WEB_BUILD
+    {
+        float pauseButtonScale = scale * 0.8f; // Make it slightly smaller relative to screen scale
+        int pauseButtonSize = (int)(50 * pauseButtonScale); // Scale the button size
+        int pauseButtonX = offsetX + (int)(VIRTUAL_SCREEN_WIDTH * scale * 0.96f); // 2% from left edge
+        int pauseButtonY = offsetY + (int)(28 * scale); // Scale the Y position
+        
+        Rectangle pauseSource = { 0, 0, (float)gameScreen->graphicsManager->pauseButtonGraphic.width, 
+                                 (float)gameScreen->graphicsManager->pauseButtonGraphic.height };
+        Rectangle pauseDest = { (float)pauseButtonX, (float)pauseButtonY, 
+                               (float)pauseButtonSize, (float)pauseButtonSize };
+        
+        DrawTexturePro(gameScreen->graphicsManager->pauseButtonGraphic, pauseSource, pauseDest, 
+                       (Vector2){0, 0}, 0.0f, RAYWHITE);
+    }
+    #endif
 }
 
 void gameScreenReset(GameScreen *gameScreen)
