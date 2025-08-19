@@ -3,3 +3,4 @@
 void initRandomizer();
 int randomNum(int max);
 float randomSpawnTime();
+float randomDecimal();

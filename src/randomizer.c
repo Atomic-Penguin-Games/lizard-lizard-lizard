@@ -31,3 +31,10 @@ float randomSpawnTime()
   // Convert back to seconds
   return (float)randomInterval / 10.0f;
 }
+
+//returns decimal number between 0 and 1
+float randomDecimal()
+{
+  float rand_float = (float)rand() / (float)RAND_MAX;
+  return rand_float;
+}

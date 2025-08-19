@@ -22,8 +22,9 @@ Vector2 getPlayerInput()
         velocity.x = 1.0f;
       }
       
-      // Normalize the velocity vector to prevent diagonal speed boost
-      if (velocity.x != 0.0f || velocity.y != 0.0f) {
+      // Normalize the velocity vector and scale to PLAYER_SPEED
+      if (velocity.x != 0 || velocity.y != 0)
+      {
           velocity = Vector2Normalize(velocity);
           velocity = Vector2Scale(velocity, PLAYER_SPEED);
       }

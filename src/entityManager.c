@@ -20,7 +20,7 @@ void updateManager(EntityManager *manager, GraphicsManager *gm, float deltaTime)
     if (manager->spawnTimer >= manager->nextSpawnTime)
       {
         // Randomly choose between spawning an iguana or sawblade (50/50 chance)
-        if (randomNum(2) == 1)
+        if (randomDecimal() <= LIZARD_SPAWN_WEIGHT)
         {
           spawnEntity(manager, LIZARD, &gm->lizardSprite, 
             VIRTUAL_SCREEN_WIDTH, VIRTUAL_SCREEN_HEIGHT);

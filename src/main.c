@@ -16,7 +16,6 @@ void unloadGame();
 
 int main(void)
 {
-    
     bool pauseMode = false;
     bool isRunning = true;
     // Virtual resolution (fixed game coordinates)
@@ -36,6 +35,9 @@ int main(void)
     
     InitWindow(windowWidth, windowHeight, "Lizard Meme");
     SetTargetFPS(60);
+    
+    // Disable ESC key to close window
+    SetExitKey(KEY_NULL);
 
     //GuiLoadStyle("res/style_jungle.rgs");
     GuiLoadStyle("res/style_cyber.rgs");
@@ -53,8 +55,6 @@ int main(void)
     GameScreen gameScreen;
     bool gameScreenInitialized = false;
     
-
-
     while (!WindowShouldClose() && isRunning)
     {
       float dT = GetFrameTime(); //deltaTime
@@ -99,11 +99,9 @@ int main(void)
       
       // Handle screen transitions
       if (nextScreen != currentScreen) {
-          printf("Screen transition: %d -> %d\n", currentScreen, nextScreen);
           
           switch (nextScreen) {
               case SCREEN_QUIT:
-                  printf("Application quit requested\n");
                   isRunning = false;
                   unloadGame();
                   break;
@@ -112,7 +110,6 @@ int main(void)
                   // Reset game screen when returning to main menu
                   if (currentScreen == SCREEN_GAME && gameScreenInitialized) {
                       gameScreenInitialized = false;
-                      printf("Returning to main menu - game screen reset\n");
                   }
                   // Re-initialize main menu to ensure cursor is properly set up
                   mainMenuScreenInit(&graphicsManager, &soundManager, currentWindowWidth, currentWindowHeight);
@@ -120,7 +117,6 @@ int main(void)
                   break;
                   
               case SCREEN_GAME:
-                  printf("Transitioning to game screen\n");
                   currentScreen = nextScreen;
                   break;
                   

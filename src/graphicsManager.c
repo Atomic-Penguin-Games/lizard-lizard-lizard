@@ -8,7 +8,8 @@ GraphicsManager initGraphicsManager()
     GraphicsManager graphicsManager = {
         .playerSpritesheet = LoadTexture("res/playerAnimationSpritesheet.png"),
         .lizardSprite = LoadTexture("res/lizardEmoji.png"),
-        .sawSprite = LoadTexture("res/circular_saw_blade.png")
+        .sawSprite = LoadTexture("res/circular_saw_blade.png"),
+        .pauseButtonGraphic = LoadTexture("res/pause.png")
     };
     
     return graphicsManager;

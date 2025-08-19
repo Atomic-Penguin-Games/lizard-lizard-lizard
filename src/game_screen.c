@@ -230,7 +230,7 @@ void gameScreenDraw(GameScreen *gameScreen, int currentScreenWidth, int currentS
         drawPlayer(&gameScreen->player);
         DrawText(TextFormat("%d", gameScreen->score), VIRTUAL_SCREEN_WIDTH/2, 30,
         SCORE_FONT_SIZE, RAYWHITE);
-        
+        DrawTexture(gameScreen->graphicsManager->pauseButtonGraphic, 50, 50, RAYWHITE);
         // Draw death overlay if needed
         if (gameScreen->state == GAME_STATE_DEATH_OVERLAY) {
             drawGameOverOverlay(gameScreen->score, VIRTUAL_SCREEN_WIDTH, VIRTUAL_SCREEN_HEIGHT);
@@ -254,6 +254,7 @@ void gameScreenDraw(GameScreen *gameScreen, int currentScreenWidth, int currentS
         VIRTUAL_SCREEN_HEIGHT * scale };
     
     DrawTexturePro(gameScreen->target.texture, source, dest, (Vector2){0, 0}, 0.0f, WHITE);
+    
 }
 
 void gameScreenReset(GameScreen *gameScreen)
