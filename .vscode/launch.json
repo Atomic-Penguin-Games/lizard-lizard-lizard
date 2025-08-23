@@ -5,18 +5,18 @@
       "name": "Debug Game",
       "type": "lldb",
       "request": "launch",
-      "program": "${workspaceFolder}/build/lizard_meme",
+      "program": "${workspaceFolder}/build/lizard_lizard_lizard",
       "args": [],
-      "cwd": "${workspaceFolder}/build/",
+      "cwd": "${workspaceFolder}/build/"
     },
     {
       "name": "Build & Debug Game",
       "type": "lldb",
       "request": "launch",
-      "program": "${workspaceFolder}/build/lizard_meme",
+      "program": "${workspaceFolder}/build/lizard_lizard_lizard",
       "args": [],
       "cwd": "${workspaceFolder}",
-      "preLaunchTask": "build", // <-- This triggers the "build" task before debugging
+      "preLaunchTask": "build"
     }
   ]
 }

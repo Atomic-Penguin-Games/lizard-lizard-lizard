@@ -39,7 +39,7 @@
         flex-direction: column;
         align-items: center;
         background-color: #2a2a2a;
-        padding: 10px;
+        padding: 5px;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         max-width: 95vw;
@@ -51,12 +51,12 @@
         border: 2px solid #4CAF50;
         border-radius: 5px;
         background: black;
-        margin: 5px 0;
+        margin: 2px 0;
         display: flex;
         justify-content: center;
         align-items: center;
         max-width: 100%;
-        max-height: calc(95vh - 120px);
+        max-height: calc(95vh - 60px);
       }
 
       /* Canvas must not have any border or padding, or mouse coords will be wrong */
@@ -72,15 +72,15 @@
 
       .controls {
         display: flex;
-        gap: 10px;
-        margin: 5px 0;
+        gap: 8px;
+        margin: 2px 0;
         flex-wrap: wrap;
         justify-content: center;
       }
 
       .status-area {
         text-align: center;
-        margin: 5px 0;
+        margin: 2px 0;
       }
 
       .spinner {
@@ -162,8 +162,6 @@
   </head>
   <body>
     <div class="game-container">
-      <h1>🦎 Lizard! Lizard! Lizard!!! 🦎</h1>
-      
       <div class="status-area">
         <div class="spinner" id='spinner'></div>
         <div id="status">Loading...</div>
@@ -227,7 +225,7 @@
                     progressElement.classList.add('hidden');
                     if (!text) {
                         spinnerElement.classList.add('hidden');
-                        statusElement.innerHTML = 'Ready to play!';
+                        statusElement.innerHTML = '';
                         return;
                     }
                 }

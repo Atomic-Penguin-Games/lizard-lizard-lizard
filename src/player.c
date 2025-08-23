@@ -57,6 +57,12 @@ Player createPlayer(Texture *spriteSheet, float playerScale)
         .scale = playerScale, //scalar to use to determine how big the player sprite should be drawn
         
         .facingLeft = false,  // Start facing right
+        
+        // Initialize flash effect
+        .isFlashing = false,
+        .flashTimer = 0.0f,
+        .flashDuration = 0.0f,
+        .flashIntensity = 0.0f
     };
     updateHitboxes(&player);
     
@@ -175,6 +181,10 @@ void updatePlayer(Player *player, Vector2 velocity, float deltaTime)
             }
         }
     }
+    
+    // Update flash effect
+    updatePlayerFlash(player, deltaTime);
+    
     //resizeHitboxes(player);
     updateHitboxes(player);
 }
@@ -232,6 +242,57 @@ void resetPlayer(Player *player)
     // Reset facing direction
     player->facingLeft = false;
     
+    // Reset flash effect
+    player->isFlashing = false;
+    player->flashTimer = 0.0f;
+    player->flashDuration = 0.0f;
+    player->flashIntensity = 0.0f;
+    
     // Update hitboxes to new position
     updateHitboxes(player);
+}
+
+void triggerPlayerFlash(Player *player, float duration)
+{
+    player->isFlashing = true;
+    player->flashTimer = 0.0f;
+    player->flashDuration = duration;
+    player->flashIntensity = 1.0f;  // Start at full intensity
+}
+
+void updatePlayerFlash(Player *player, float deltaTime)
+{
+    if (!player->isFlashing) return;
+    
+    player->flashTimer += deltaTime;
+    
+    // Calculate flash intensity (fade out over time)
+    float progress = player->flashTimer / player->flashDuration;
+    if (progress >= 1.0f) {
+        // Flash effect finished
+        player->isFlashing = false;
+        player->flashIntensity = 0.0f;
+    } else {
+        // Fade out from 1.0 to 0.0
+        player->flashIntensity = 1.0f - progress;
+    }
+}
+
+void drawPlayerWithShader(Player *player, Shader shader, int intensityLoc, int colorLoc)
+{
+    // Set shader uniforms
+    float intensity = player->isFlashing ? player->flashIntensity : 0.0f;
+    Vector3 flashColor = PLAYER_FLASH_COLOR;
+    
+    SetShaderValue(shader, intensityLoc, &intensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(shader, colorLoc, &flashColor, SHADER_UNIFORM_VEC3);
+    
+    // Begin shader mode
+    BeginShaderMode(shader);
+    
+    // Draw player normally
+    drawPlayer(player);
+    
+    // End shader mode
+    EndShaderMode();
 }

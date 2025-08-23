@@ -68,6 +68,9 @@
 #define PLAYER_LOWER_TAILBOX_WIDTH 28
 #define PLAYER_LOWER_TAILBOX_HEIGHT 10
 
+#define PLAYER_FLASH_DURATION 0.3f
+#define PLAYER_FLASH_COLOR (Vector3){1.0f, 1.0f, 1.0f}  // White flash
+
 #define LIZARD_SPEED 770.0f
 #define SAW_SPEED 800.0f
 #define OBJECT_SPAWN_RATE_MIN 0.4f // Minimum spawn time in seconds

@@ -4,5 +4,8 @@
     "files.associations": {
       "time.h": "c",
       "definitions.h": "c"
-    }
-  }
+    },
+    "lldb.showDisassembly": "auto",
+    "lldb.dereferencePointers": true,
+    "lldb.suppressMissingSourceFiles": false
+}

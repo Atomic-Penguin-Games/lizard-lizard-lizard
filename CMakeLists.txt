@@ -3,6 +3,22 @@ cmake_minimum_required(VERSION 3.13)
 set(CMAKE_CXX_STANDARD_REQUIRED 23)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Set build type to Debug if not specified
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
+endif()
+
+# Configure build flags based on build type
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 -DDEBUG_MODE=1")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -DDEBUG_MODE=1")
+    message(STATUS "Building in Debug mode with debug symbols")
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -DNDEBUG -DDEBUG_MODE=0")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -DNDEBUG -DDEBUG_MODE=0")
+    message(STATUS "Building in Release mode with optimizations")
+endif()
+
 project(Lizard_Lizard_Lizard)
 set(EXECUTABLE lizard_lizard_lizard)
 

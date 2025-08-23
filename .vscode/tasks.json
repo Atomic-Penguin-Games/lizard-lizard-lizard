@@ -23,7 +23,53 @@
             "close": true
           }
         },
-        "detail": "Build the project using CMake"
+        "detail": "Build the project using CMake (Debug)"
+      },
+      {
+        "label": "build-release",
+        "type": "shell",
+        "command": "cmake",
+        "args": [
+          "--build",
+          "build_release",
+          "--config",
+          "Release"
+        ],
+        "problemMatcher": [],
+        "group": "build",
+        "options": {
+          "cwd": "${workspaceFolder}",
+          "terminal": {
+            "reveal": "always",
+            "close": false
+          }
+        },
+        "detail": "Build the project using CMake (Release)",
+        "dependsOn": "configure-release"
+      },
+      {
+        "label": "configure-release",
+        "type": "shell",
+        "command": "cmake",
+        "args": [
+          "-S", ".",
+          "-B", "build_release",
+          "-DCMAKE_BUILD_TYPE=Release"
+        ],
+        "options": {
+          "cwd": "${workspaceFolder}"
+        },
+        "detail": "Configure CMake for Release build"
+      },
+      {
+        "label": "clean-release",
+        "type": "shell",
+        "command": "rm",
+        "args": ["-rf", "build_release"],
+        "options": {
+          "cwd": "${workspaceFolder}"
+        },
+        "detail": "Clean Release build directory"
       }
     ]
-  }
+}

@@ -68,6 +68,7 @@ ScreenID gameScreenUpdate(GameScreen *gameScreen, float dt)
                 gameScreen->score++;
                 playRandomScoreSound(gameScreen->soundManager);
                 playAnimation(&gameScreen->player);
+                triggerPlayerFlash(&gameScreen->player, PLAYER_FLASH_DURATION);
                 break;
             case DEATH_COLLISION:
                 // Switch to death overlay
@@ -229,7 +230,13 @@ void gameScreenDraw(GameScreen *gameScreen, int currentScreenWidth, int currentS
     BeginTextureMode(gameScreen->target);
         ClearBackground(BACKGROUND_BUFFER_COLOR);
         drawEntities(&gameScreen->entityManager);
-        drawPlayer(&gameScreen->player);
+        
+        // Draw player with flash shader effect
+        drawPlayerWithShader(&gameScreen->player, 
+                           gameScreen->graphicsManager->flashShader,
+                           gameScreen->graphicsManager->flashIntensityLoc,
+                           gameScreen->graphicsManager->flashColorLoc);
+        
         DrawText(TextFormat("%d", gameScreen->score), VIRTUAL_SCREEN_WIDTH/2, 30,
         SCORE_FONT_SIZE, RAYWHITE);
         // Draw death overlay if needed

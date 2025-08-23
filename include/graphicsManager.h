@@ -8,6 +8,9 @@ typedef struct GraphicsManager
     Texture sawSprite;
     Texture cursorGraphic;
     Texture pauseButtonGraphic;
+    Shader flashShader;
+    int flashIntensityLoc;
+    int flashColorLoc;
 } GraphicsManager;
 
 GraphicsManager initGraphicsManager();

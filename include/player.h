@@ -32,12 +32,21 @@ typedef struct Player {
   
   // Facing direction
   bool facingLeft;
+  
+  // Flash effect fields
+  bool isFlashing;
+  float flashTimer;
+  float flashDuration;
+  float flashIntensity;
 } Player;
 
 Player createPlayer(Texture *sprite, float playerScale);
 void initHitboxPointers(Player *player);
 void drawPlayer(Player *player);
+void drawPlayerWithShader(Player *player, Shader shader, int intensityLoc, int colorLoc);
 void updatePlayer(Player *player, Vector2 velocity, float deltaTime);
 void updateHitboxes(Player *player);
 void playAnimation(Player *player);
 void resetPlayer(Player *player);  // Reset player to spawn position
+void triggerPlayerFlash(Player *player, float duration);  // Trigger flash effect
+void updatePlayerFlash(Player *player, float deltaTime);  // Update flash effect
