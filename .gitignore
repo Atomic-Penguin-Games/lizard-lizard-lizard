@@ -3,3 +3,4 @@ build_release/
 build_web/
 build-web/
 build-windows/
+.cache/
