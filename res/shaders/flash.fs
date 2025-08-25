@@ -1,8 +1,9 @@
-#version 330
+#version 100
+precision mediump float;
 
 // Input vertex attributes (from vertex shader)
-in vec2 fragTexCoord;
-in vec4 fragColor;
+varying vec2 fragTexCoord;
+varying vec4 fragColor;
 
 // Input uniform values
 uniform sampler2D texture0;
@@ -12,13 +13,10 @@ uniform vec4 colDiffuse;
 uniform float flashIntensity;  // 0.0 = no flash, 1.0 = full white flash
 uniform vec3 flashColor;       // Color of the flash (usually white)
 
-// Output fragment color
-out vec4 finalColor;
-
 void main()
 {
     // Sample the texture
-    vec4 texelColor = texture(texture0, fragTexCoord);
+    vec4 texelColor = texture2D(texture0, fragTexCoord);
     
     // Apply base tinting
     vec4 baseColor = texelColor * colDiffuse * fragColor;
@@ -29,5 +27,5 @@ void main()
     vec3 flashedColor = mix(baseColor.rgb, flashColor, flashIntensity);
     
     // Preserve original alpha
-    finalColor = vec4(flashedColor, baseColor.a);
+    gl_FragColor = vec4(flashedColor, baseColor.a);
 }

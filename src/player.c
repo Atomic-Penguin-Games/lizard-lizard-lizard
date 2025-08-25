@@ -280,6 +280,13 @@ void updatePlayerFlash(Player *player, float deltaTime)
 
 void drawPlayerWithShader(Player *player, Shader shader, int intensityLoc, int colorLoc)
 {
+    // Check if shader is valid
+    if (shader.id <= 0 || intensityLoc < 0 || colorLoc < 0) {
+        // Fallback: draw player without shader
+        drawPlayer(player);
+        return;
+    }
+    
     // Set shader uniforms
     float intensity = player->isFlashing ? player->flashIntensity : 0.0f;
     Vector3 flashColor = PLAYER_FLASH_COLOR;
