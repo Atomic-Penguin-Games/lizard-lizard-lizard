@@ -16,6 +16,7 @@ void unloadGame();
 
 int main(void)
 {
+    initRandomizer();
     bool pauseMode = false;
     bool isRunning = true;
     // Virtual resolution (fixed game coordinates)
@@ -34,16 +35,8 @@ int main(void)
     
     InitWindow(windowWidth, windowHeight, "Lizard Meme");
     SetTargetFPS(60);
-    
-    // Disable ESC key to close window
-    SetExitKey(KEY_NULL);
 
-    //GuiLoadStyle("res/style_jungle.rgs");
     GuiLoadStyle("res/style_cyber.rgs");
-    //GuiLoadStyle("res/style_dark.rgs");
-    //GuiLoadStyle("res/style_ashes.rgs");
-
-    initRandomizer();
 
     GraphicsManager graphicsManager = initGraphicsManager();
     SoundManager soundManager = initSoundManager();

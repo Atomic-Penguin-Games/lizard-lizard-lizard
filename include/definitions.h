@@ -44,7 +44,7 @@
 #define SCORE_FONT_SIZE 60
 
 #define PLAYER_SPAWN_LOCATION (Vector2){50, 540}
-#define PLAYER_SPEED 825.0f
+#define PLAYER_SPEED 950.0f
 #define PLAYER_SPRITE_WIDTH 210
 #define PLAYER_SPRITE_HEIGHT 190
 #define PLAYER_SPRITE_SCALE 0.14f
@@ -71,12 +71,12 @@
 #define PLAYER_FLASH_DURATION 0.3f
 #define PLAYER_FLASH_COLOR (Vector3){1.0f, 1.0f, 1.0f}  // White flash
 
-#define LIZARD_SPEED 770.0f
-#define SAW_SPEED 800.0f
-#define OBJECT_SPAWN_RATE_MIN 0.4f // Minimum spawn time in seconds
-#define OBJECT_SPAWN_RATE_MAX 0.75f // Maximum spawn time in seconds
+#define LIZARD_SPEED 735.0f
+#define SAW_SPEED 785.0f
+#define OBJECT_SPAWN_RATE_MIN 0.65f // Minimum spawn time in seconds
+#define OBJECT_SPAWN_RATE_MAX 1.05f // Maximum spawn time in seconds
 #define MAX_ENTITIES 100
-#define LIZARD_SPAWN_WEIGHT 0.54f //54% lizard spawn, 46% saw spawn
+#define LIZARD_SPAWN_WEIGHT 0.65f //65% lizard spawn, 35% saw spawn
 #define ENTITY_SPAWN_HEIGHT_OFFSET 100
 #define SAW_SCALE 0.08f
 #define SAW_HITBOX_RADIUS 42
