@@ -97,7 +97,6 @@ void gameLoop(GameContext gameContext)
       // Draw current screen
       BeginDrawing();
           ClearBackground(BACKGROUND_BUFFER_COLOR);
-          
           switch (currentScreen)
           {
               case SCREEN_MAIN_MENU:
