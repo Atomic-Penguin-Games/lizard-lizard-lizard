@@ -14,11 +14,17 @@
 
 void unloadGame();
 
+typedef struct GameContext {
+    GraphicsManager* gm;
+    SoundManager* sm;
+    CursorManager* cm;
+} GameContext;
+
+void gameLoop(GameContext gameContext);
+
 int main(void)
 {
     initRandomizer();
-    bool pauseMode = false;
-    bool isRunning = true;
     // Virtual resolution (fixed game coordinates)
     const int virtualScreenWidth = SCREEN_WIDTH;
     const int virtualScreenHeight = SCREEN_HEIGHT;
@@ -26,10 +32,6 @@ int main(void)
     // Actual window size (can be different/resizable)
     const int windowWidth = SCREEN_WIDTH;
     const int windowHeight = SCREEN_HEIGHT;
-
-    // Screen management
-    ScreenID currentScreen = SCREEN_MAIN_MENU;
-    ScreenID nextScreen = SCREEN_MAIN_MENU;
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE); //enable fullscreen
     
@@ -42,14 +44,32 @@ int main(void)
     SoundManager soundManager = initSoundManager();
     CursorManager cursorManager = initCursorManager(&graphicsManager);
 
-    mainMenuScreenInit(&graphicsManager, &soundManager, &cursorManager,
+    GameContext gameContext = {
+        .gm = &graphicsManager,
+        .sm = &soundManager,
+        .cm = &cursorManager
+    };
+
+    gameLoop(gameContext);
+
+    CloseWindow();
+    return 0;
+}
+
+void gameLoop(GameContext gameContext)
+{
+    mainMenuScreenInit(gameContext.gm, gameContext.sm, gameContext.cm,
         GetScreenWidth(), GetScreenHeight());
 
     // Game screen will be initialized when needed
     GameScreen gameScreen;
     bool gameScreenInitialized = false;
-    
-    while (!WindowShouldClose() && isRunning)
+
+    // Screen management
+    ScreenID currentScreen = SCREEN_MAIN_MENU;
+    ScreenID nextScreen = SCREEN_MAIN_MENU;
+
+    while (!WindowShouldClose())
     {
       float dT = GetFrameTime(); //deltaTime
       
@@ -65,7 +85,7 @@ int main(void)
               break;
           case SCREEN_GAME:
               if (!gameScreenInitialized) {
-                  gameScreen = gameScreenInit(&graphicsManager, &soundManager, &cursorManager);
+                  gameScreen = gameScreenInit(gameContext.gm, gameContext.sm, gameContext.cm);
                   gameScreenInitialized = true;
               }
               nextScreen = gameScreenUpdate(&gameScreen, dT);
@@ -96,9 +116,7 @@ int main(void)
           
           switch (nextScreen) {
               case SCREEN_QUIT:
-                  isRunning = false;
-                  unloadGame();
-                  break;
+                  return;
                   
               case SCREEN_MAIN_MENU:
                   // Reset game screen when returning to main menu
@@ -106,7 +124,7 @@ int main(void)
                       gameScreenInitialized = false;
                   }
                   // Re-initialize main menu to ensure cursor is properly set up
-                  mainMenuScreenInit(&graphicsManager, &soundManager, &cursorManager,
+                  mainMenuScreenInit(gameContext.gm, gameContext.sm, gameContext.cm,
                     currentWindowWidth, currentWindowHeight);
                   currentScreen = nextScreen;
                   break;
@@ -121,9 +139,6 @@ int main(void)
           }
       }
     }
-
-    CloseWindow();
-    return 0;
 }
 
 void unloadGame()
