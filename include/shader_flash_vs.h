@@ -1,0 +1,27 @@
+#pragma once
+
+const char* shader_flash_vs = 
+"#version 100\n"
+"\n"
+"// Input vertex attributes\n"
+"attribute vec3 vertexPosition;\n"
+"attribute vec2 vertexTexCoord;\n"
+"attribute vec3 vertexNormal;\n"
+"attribute vec4 vertexColor;\n"
+"\n"
+"// Input uniform values\n"
+"uniform mat4 mvp;\n"
+"\n"
+"// Output vertex attributes (to fragment shader)\n"
+"varying vec2 fragTexCoord;\n"
+"varying vec4 fragColor;\n"
+"\n"
+"void main()\n"
+"{\n"
+"    // Send vertex attributes to fragment shader\n"
+"    fragTexCoord = vertexTexCoord;\n"
+"    fragColor = vertexColor;\n"
+"\n"
+"    // Calculate final vertex position\n"
+"    gl_Position = mvp*vec4(vertexPosition, 1.0);\n"
+"}\n";

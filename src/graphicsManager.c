@@ -1,17 +1,40 @@
 #include "graphicsManager.h"
+#include "player_spritesheet.h"
+#include "lizard_sprite.h"
+#include "saw_sprite.h"
+#include "mouse_sprite.h"
+#include "pause_sprite.h"
+#include "shader_flash_vs.h"
+#include "shader_flash_fs.h"
 
 GraphicsManager initGraphicsManager()
 {
-    //Texture sprite = LoadTexture("res/animationSpritesheet.png");
-    //Texture iguanaSprite = LoadTexture("res/lizardEmoji.png");
-    //Texture sawSprite = LoadTexture("res/circular_saw_blade.png");
-    
-    // Load flash shader with error checking
-    Shader flashShader = LoadShader("res/shaders/flash.vs", "res/shaders/flash.fs");
+    Image img = LoadImageFromMemory(".png", player_spritesheet, player_spritesheet_length);
+    Texture playerSprite = LoadTextureFromImage(img);
+    UnloadImage(img);
+
+    img = LoadImageFromMemory(".png", lizard_sprite, lizard_sprite_length);
+    Texture lizardSprite = LoadTextureFromImage(img);
+    UnloadImage(img);
+
+    img = LoadImageFromMemory(".png", saw_sprite, saw_sprite_length);
+    Texture sawSprite = LoadTextureFromImage(img);
+    UnloadImage(img);
+
+    img = LoadImageFromMemory(".png", mouse_sprite, mouse_sprite_length);
+    Texture mouseSprite = LoadTextureFromImage(img);
+    UnloadImage(img);
+
+    img = LoadImageFromMemory(".png", pause_sprite, pause_sprite_length);
+    Texture pauseSprite = LoadTextureFromImage(img);
+    UnloadImage(img);
+
+    Shader flashShader = LoadShaderFromMemory(shader_flash_vs, shader_flash_fs);
+    //Shader flashShader = LoadShader("res/shaders/flash.vs", "res/shaders/flash.fs");
     int flashIntensityLoc = -1;
     int flashColorLoc = -1;
-    
-    // Check if shader loaded successfully
+
+    // Shader loader error checking
     if (flashShader.id > 0) {
         flashIntensityLoc = GetShaderLocation(flashShader, "flashIntensity");
         flashColorLoc = GetShaderLocation(flashShader, "flashColor");
@@ -21,11 +44,11 @@ GraphicsManager initGraphicsManager()
     }
     
     GraphicsManager graphicsManager = {
-        .playerSpritesheet = LoadTexture("res/playerAnimationSpritesheet.png"),
-        .lizardSprite = LoadTexture("res/lizardEmoji.png"),
-        .sawSprite = LoadTexture("res/circular_saw_blade.png"),
-        .cursorGraphic = LoadTexture("res/mouse_sprite.png"),
-        .pauseButtonGraphic = LoadTexture("res/pause.png"),
+        .playerSpritesheet = playerSprite,
+        .lizardSprite = lizardSprite,
+        .sawSprite = sawSprite,
+        .cursorGraphic = mouseSprite,
+        .pauseButtonGraphic = pauseSprite,
         .flashShader = flashShader,
         .flashIntensityLoc = flashIntensityLoc,
         .flashColorLoc = flashColorLoc

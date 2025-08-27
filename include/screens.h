@@ -31,8 +31,8 @@ typedef struct {
 } GameScreen;
 
 void splashScreenInit();
-ScreenID splashScreenUpdate(float dt);
-void splashScreenDraw();
+bool splashScreenUpdate(float dt);
+void splashScreenDraw(int screenWidth, int screenHeight);
 void splashScreenUnload();
 
 void mainMenuScreenInit(GraphicsManager *gm, SoundManager *sm, CursorManager *cm,

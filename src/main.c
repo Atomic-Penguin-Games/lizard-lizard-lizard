@@ -11,6 +11,7 @@
 #include "inputManager.h"
 #include "graphicsManager.h"
 #include "screens.h"
+#include "raygui_style_cyber.h"
 
 void unloadGame();
 
@@ -21,6 +22,7 @@ typedef struct GameContext {
 } GameContext;
 
 void gameLoop(GameContext gameContext);
+void splashScreen();
 
 int main(void)
 {
@@ -38,7 +40,8 @@ int main(void)
     InitWindow(windowWidth, windowHeight, "Lizard Meme");
     SetTargetFPS(60);
 
-    GuiLoadStyle("res/style_cyber.rgs");
+    GuiLoadStyleFromMemory(raygui_style_cyber, raygui_style_cyber_length);
+    //GuiLoadStyle("res/style_cyber.rgs");
 
     GraphicsManager graphicsManager = initGraphicsManager();
     SoundManager soundManager = initSoundManager();
@@ -50,10 +53,24 @@ int main(void)
         .cm = &cursorManager
     };
 
+    splashScreen();
+
     gameLoop(gameContext);
 
     CloseWindow();
     return 0;
+}
+
+void splashScreen()
+{
+    splashScreenInit();
+
+    while(splashScreenUpdate(GetFrameTime()))
+    {
+        splashScreenDraw(GetScreenWidth(), GetScreenHeight());
+    }
+
+    splashScreenUnload();
 }
 
 void gameLoop(GameContext gameContext)
