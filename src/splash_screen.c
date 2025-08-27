@@ -22,8 +22,11 @@ bool splashScreenUpdate(float dt)
 
 void splashScreenDraw(int screenWidth, int screenHeight)
 {
-    DrawTexture(splashLogo, screenWidth/2-(splashLogo.width/2), 
-        screenHeight/2 - (splashLogo.height/2), RAYWHITE);
+    BeginDrawing();
+        ClearBackground(BACKGROUND_BUFFER_COLOR);
+        DrawTexture(splashLogo, screenWidth/2-(splashLogo.width/2), 
+            screenHeight/2 - (splashLogo.height/2), RAYWHITE);
+    EndDrawing();
 }
 
 void splashScreenUnload()
