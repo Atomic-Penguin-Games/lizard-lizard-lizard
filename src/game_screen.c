@@ -18,6 +18,7 @@ typedef struct {
     bool replayButtonPressed;
     bool quitButtonPressed;
     bool gameCursorInitialized;
+    bool isPaused;
 } GameScreenState;
 
 // Static state instance
@@ -29,6 +30,7 @@ GameScreen gameScreenInit(GraphicsManager *gm, SoundManager *sm, CursorManager *
     gameState.replayButtonPressed = false;
     gameState.quitButtonPressed = false;
     gameState.gameCursorInitialized = false;
+    gameState.isPaused = false;
     
     EntityManager entityManager = initEntityManager();
     Player player = createPlayer(&gm->playerSpritesheet, PLAYER_SPRITE_SCALE);
@@ -55,31 +57,62 @@ ScreenID gameScreenUpdate(GameScreen *gameScreen, float dt)
     }
     
     if (gameScreen->state == GAME_STATE_PLAYING) {
+        if (IsKeyPressed(KEY_SPACE)) {
+            gameState.isPaused = !gameState.isPaused;
+        }
+        
+        // Check for pause button click (web builds only)
+        #if IS_WEB_BUILD
+        if (CursorManagerIsPressed()) {
+            // Calculate pause button position (same as in draw function)
+            int currentScreenWidth = GetScreenWidth();
+            int currentScreenHeight = GetScreenHeight();
+            float scale = fminf((float)currentScreenWidth/VIRTUAL_SCREEN_WIDTH,
+                (float)currentScreenHeight/VIRTUAL_SCREEN_HEIGHT);
+            int offsetX = (currentScreenWidth - (int)(VIRTUAL_SCREEN_WIDTH * scale)) / 2;
+            int offsetY = (currentScreenHeight - (int)(VIRTUAL_SCREEN_HEIGHT * scale)) / 2;
+            
+            float pauseButtonScale = scale * 0.8f;
+            int pauseButtonSize = (int)(50 * pauseButtonScale);
+            int pauseButtonX = offsetX + (int)(VIRTUAL_SCREEN_WIDTH * scale * 0.96f);
+            int pauseButtonY = offsetY + (int)(28 * scale);
+            
+            Rectangle pauseButtonRect = { (float)pauseButtonX, (float)pauseButtonY, 
+                                        (float)pauseButtonSize, (float)pauseButtonSize };
+            
+            Vector2 mousePos = CursorManagerGetPosition();
+            if (CheckCollisionPointRec(mousePos, pauseButtonRect)) {
+                gameState.isPaused = !gameState.isPaused;
+            }
+        }
+        #endif
         // Normal gameplay
-        Vector2 velocity = getPlayerInput();
-        updatePlayer(&gameScreen->player, velocity, dt);
-        updateManager(&gameScreen->entityManager, gameScreen->graphicsManager, dt);
-        updateEntities(&gameScreen->entityManager, dt);
-        CollisionType collisionType = checkForCollisions(
-            &gameScreen->entityManager, &gameScreen->player.hitBoxes);
-        switch (collisionType)
-        {
-            case SCORE_COLLISION:
-                gameScreen->score++;
-                playRandomScoreSound(gameScreen->soundManager);
-                playAnimation(&gameScreen->player);
-                triggerPlayerFlash(&gameScreen->player, PLAYER_FLASH_DURATION);
-                break;
-            case DEATH_COLLISION:
-                // Switch to death overlay
-                gameScreen->state = GAME_STATE_DEATH_OVERLAY;
+        if (gameState.isPaused == false) {
+            Vector2 velocity = getPlayerInput();
+            updatePlayer(&gameScreen->player, velocity, dt);
+            updateManager(&gameScreen->entityManager, gameScreen->graphicsManager, dt);
+            updateEntities(&gameScreen->entityManager, dt);
+            CollisionType collisionType = checkForCollisions(
+                &gameScreen->entityManager, &gameScreen->player.hitBoxes);
+            switch (collisionType)
+            {
+                case SCORE_COLLISION:
+                    gameScreen->score++;
+                    playRandomScoreSound(gameScreen->soundManager);
+                    playAnimation(&gameScreen->player);
+                    triggerPlayerFlash(&gameScreen->player, PLAYER_FLASH_DURATION);
+                    break;
+                case DEATH_COLLISION:
+                    // Switch to death overlay
+                    gameScreen->state = GAME_STATE_DEATH_OVERLAY;
                 
-                // Initialize cursor manager for game over dialog
+                    // Initialize cursor manager for game over dialog
 
-                gameState.gameCursorInitialized = true;
-                break;
-            default:
-                break;
+                    gameState.gameCursorInitialized = true;
+                    break;
+                default:
+                    break;
+            }
         }
     } else if (gameScreen->state == GAME_STATE_DEATH_OVERLAY) {
         // Death overlay input handling
@@ -263,6 +296,12 @@ void gameScreenDraw(GameScreen *gameScreen, int currentScreenWidth, int currentS
     
     DrawTexturePro(gameScreen->target.texture, source, dest, (Vector2){0, 0}, 0.0f, WHITE);
     
+    
+    int textSize = MeasureText(PAUSE_TEXT, 80);
+    if (gameState.isPaused == true) {
+        DrawText(PAUSE_TEXT, currentScreenWidth/2 - (textSize/2), currentScreenHeight/2, 80, RAYWHITE);
+    }
+
     // Draw pause button only for web builds
     #if IS_WEB_BUILD
     {

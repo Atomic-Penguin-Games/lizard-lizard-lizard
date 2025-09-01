@@ -15,6 +15,7 @@
 
 #define DEBUG_MODE false
 #define GAME_TITLE "LIZARD! LIZARD! LIZARD!!!"
+#define PAUSE_TEXT "Paused!"
 #define SPLASH_SCREEN_TIMER 1.5f
 #define BACKGROUND_BUFFER_COLOR (Color) {248, 58, 95, 255}
 
