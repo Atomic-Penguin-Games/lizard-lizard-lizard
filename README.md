@@ -9,7 +9,7 @@
 [![Tech Stack](https://skillicons.dev/icons?i=bash,c,cmake,git,gitlab,github,vscode,js,html,css,wasm,md)](https://skillicons.dev)
 
 
-[!Game Screenshot](screenshot.png)
+![Game Screenshot](screenshot.png)
 
 ## How to play
 Dodge the saws and collect the lizards
