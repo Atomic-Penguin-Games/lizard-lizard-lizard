@@ -71,7 +71,7 @@ ScreenID gameScreenUpdate(GameScreen *gameScreen, float dt)
                 (float)currentScreenHeight/VIRTUAL_SCREEN_HEIGHT);
             int offsetX = (currentScreenWidth - (int)(VIRTUAL_SCREEN_WIDTH * scale)) / 2;
             int offsetY = (currentScreenHeight - (int)(VIRTUAL_SCREEN_HEIGHT * scale)) / 2;
-            
+             
             float pauseButtonScale = scale * 0.8f;
             int pauseButtonSize = (int)(50 * pauseButtonScale);
             int pauseButtonX = offsetX + (int)(VIRTUAL_SCREEN_WIDTH * scale * 0.96f);

@@ -7,3 +7,13 @@
 
 ##
 [![Tech Stack](https://skillicons.dev/icons?i=bash,c,cmake,git,gitlab,github,vscode,js,html,css,wasm,md)](https://skillicons.dev)
+
+
+[!Game Screenshot](screenshot.png)
+
+## How to play
+Dodge the saws and collect the lizards
+
+Move with WASD or arrow keys. 
+
+Pause/resume with space bar.
